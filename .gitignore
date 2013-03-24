@@ -1,0 +1,7 @@
+*.py~
+*.pyc
+*.lp
+*.*~
+*.gitignore~
+*.csv
+*.csv~
