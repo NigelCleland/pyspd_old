@@ -41,7 +41,20 @@ class LPSolver:
         rbpr = self.ISO.reserve_band_proportion
         
         spin = self.ISO.spinning_stations
-        spin_map = self.ISO.spinning_map        
+        spin_map = self.ISO.spinning_map
+        
+        node_map = self.ISO.node_energy_map
+        demand = self.ISO.node_demand
+        
+        node_t_map = self.ISO.node_transmission_map
+        td = self.ISO.node_transmission_direction
+        
+        rzones = self.ISO.reserve_zones
+        rzone_g = self.ISO.reserve_zone_generators
+        rzone_t = self.ISO.reserve_zone_transmission
+        
+        
+        # Set up the linear program        
         
         self.lp = lp.LpProblem("Model Dispatch", lp.LpMinimize)
         
@@ -54,7 +67,9 @@ class LPSolver:
         rto = lp.LpVariable.dicts("reserve_total", rt)
         tto = lp.LpVariable.dicts("transmission_total", tt)
         
-        node_inj = lp.LpVariable.dict("nodal_inject", nd)
+        node_inj = lp.LpVariable.dicts("nodal_inject", nd)
+        
+        risk = lp.LpVariable.dicts("risk", rzones)
         
         
         # Map the add Constraint method to a simpler string
@@ -71,7 +86,8 @@ class LPSolver:
         
         # Nodal Dispatch
         for n in nd:
-            addC(node_inj[n] == 
+            addC(node_inj[n] == SUM([ebo[i] for i in node_map[n]]) - demand[n])
+            addC(node_inj[n] == SUM([tto[i] * td[i] for i in node_t_map[n]]))
         
         # Individual Band Offer
         for i in eb:
@@ -106,6 +122,19 @@ class LPSolver:
             
             for j in spin_map[i]
                 addC(rbo[j] <= rbpr[j] * eto[i])
+                
+        
+        # Risk Constraints
+        
+        for r in rzones:
+            # Generation Risk
+            for i in rzone_g:
+                addC(risk[r] >= eto[i])
+        
+            # Transmission Risk        
+            for t in rzone_t:
+                addC(risk[r] >= tto[t])
+        
                 
                 
         
