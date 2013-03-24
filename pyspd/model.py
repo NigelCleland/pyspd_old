@@ -40,7 +40,7 @@ class LPSolver:
         ttm = self.ISO.transmission_total_maximum
         rbpr = self.ISO.reserve_band_proportion
         
-        spin = self.ISO.spinning_stations
+        spin = self.ISO.spinning_station_names
         spin_map = self.ISO.spinning_map
         
         node_map = self.ISO.node_energy_map

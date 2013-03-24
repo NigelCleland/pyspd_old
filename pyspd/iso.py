@@ -22,40 +22,42 @@ class ISO:
     def initialise_empty(self):
         """ Initialise an empty dispatch """
         
-        self.energy_bands = []
-        self.reserve_bands = []
+        self.energy_bands = [] # Done
+        self.reserve_bands = [] # Done
         self.transmission_bands = []
-        self.all_nodes = []
+        self.all_nodes = [] # Done
         
-        self.energy_totals = []
-        self.reserve_totals = []
+        self.energy_totals = [] # Done
+        self.reserve_totals = [] # Done
         self.transmission_totals = []
         
-        self.energy_band_map = defaultdict(list)
-        self.reserve_band_map = defaultdict(list)
+        self.energy_band_map = defaultdict(list) # Done
+        self.reserve_band_map = defaultdict(list) # Done
         self.transmission_band_map = defaultdict(list)
         
-        self.energy_band_prices = {}
-        self.reserve_band_prices = {}
+        self.energy_band_prices = {} # Done
+        self.reserve_band_prices = {} # Done
         
-        self.energy_band_maximum = {}
-        self.reserve_band_maximum = {}
+        self.energy_band_maximum = {} # Done
+        self.reserve_band_maximum = {} # Done
         self.transmission_band_maximum = {}
         
-        self.energy_total_maximum = {}
+        self.energy_total_maximum = {} # Done
         self.transmission_total_maximum = {}
-        self.reserve_band_proportion = {}
+        self.reserve_band_proportion = {} # Done
         
-        self.spinning_stations = []
-        self.spin_map = {}
+        self.spinning_stations = [] # Done
+        self.spinning_station_names = [] # Done
+        self.spin_map = defaultdict(list) # Done
         
-        self.node_energy_map = defaultdict(list)
-        self.node_demand = {}
+        self.node_energy_map = defaultdict(list) # Done
+        self.node_demand = {} # Done
         
         self.node_t_map = defaultdict(list)
         self.node_transmission_direction = defaultdict(dict)
         
-        self.reserve_zones = []
+        self.reserve_zones = [] # Done
+        self.reserve_zone_names = [] # Done
         self.reserve_zone_generators = defaultdict(list)
         self.reserve_zone_transmission = defaultdict(list)
         
@@ -64,22 +66,50 @@ class ISO:
         """ Create a full offer for dispatch """
         
         
-    def get_offers(self):
+    def get_nodal_demand(self):
+        for node in self.nodes:
+            self.all_nodes.append(node.name)
+            self.node_demand[node.name] = node.demand
+            for station in node.nodal_stations:
+                self.node_energy_map[node.name].append(station.name)
+            
+        
+        
+    def get_energy_offers(self):
         for station in self.stations:
             self.energy_totals.append(station.name)
+            self.energy_total_maximum[station.name] = station.capacity
             
             for band in station.band_names:
                 self.energy_bands.append(band)
                 self.energy_band_prices[band] = station.band_prices[band]
                 self.energy_band_maximum[band] = station.band_offers[band]
+                
+            if station.spinning == True:
+                self.spinning_station_names.append(station.name)
+                for band in station.band_names:
+                    self.spin_map[station.name].append(band)
+                    
+                    
+    def get_reserve_offers(self):
+        for station in self.spinning_stations:
+            self.reserve_totals.append(station.name)
             
+            
+            for band in station.rband_names:
+                self.reserve_bands.append(band)
+                self.reserve_band_prices[band] = station.rband_prices[band]
+                self.reserve_band_maximum[band] = station.rband_offers[band]
+                self.reserve_band_proportion[band] = station.rband_proportions[band]
+            
+                self.reserve_band_map[station.name].append(band)
             
         
     
     def _add_station(self, station):
         """ Add a generation station to the ISO """
         self.stations.append(station)
-        if station.spinning == True:
+        if station.spinning:
             self.spinning_stations.append(station)
         
         
@@ -89,6 +119,10 @@ class ISO:
     
     def _add_branch(self, branch):
         self.branches.append(branch)
+        
+    def _add_reserve_zone(self, RZ):
+        self.reserve_zones.append(RZ)
+        self.reserve_zone_names.append(RZ.name)
         
         
 if __name__ == '__main__':
