@@ -66,7 +66,13 @@ class ISO:
         
     def get_offers(self):
         for station in self.stations:
-            pass
+            self.energy_totals.append(station.name)
+            
+            for band in station.band_names:
+                self.energy_bands.append(band)
+                self.energy_band_prices[band] = station.band_prices[band]
+                self.energy_band_maximum[band] = station.band_offers[band]
+            
             
         
     
@@ -85,6 +91,5 @@ class ISO:
         self.branches.append(branch)
         
         
-        
-        
-    def     
+if __name__ == '__main__':
+    pass

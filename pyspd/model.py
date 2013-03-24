@@ -118,9 +118,9 @@ class LPSolver:
             
         # Spinning Reserve Constraints
         for i in spin:
-            addC(rto[i] + eto[i] <= etm[i]
+            addC(rto[i] + eto[i] <= etm[i])
             
-            for j in spin_map[i]
+            for j in spin_map[i]:
                 addC(rbo[j] <= rbpr[j] * eto[i])
                 
         
@@ -137,10 +137,5 @@ class LPSolver:
         
                 
                 
-        
-            
-       
-        
-        
-    
-    
+if __name__ == '__main__':
+    pass
