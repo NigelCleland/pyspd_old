@@ -59,17 +59,19 @@ class LPSolver:
         
         # Map the add Constraint method to a simpler string
         addC = self.lp.addConstraint
+        SUM = lp.lpSum
         
         
 
         # Objective function
-        self.lp.setObjective(lp.lpSum([ebo[i] * ebp[i] for i in eb]) +\
-                             lp.lpSum([rbo[j] * rbp[j] for j in rb]))
+        self.lp.setObjective(SUM([ebo[i] * ebp[i] for i in eb]) +\
+                             SUM([rbo[j] * rbp[j] for j in rb]))
                              
         # Begin Adding Constraint
         
         # Nodal Dispatch
-        
+        for n in nd:
+            addC(node_inj[n] == 
         
         # Individual Band Offer
         for i in eb:
@@ -86,15 +88,15 @@ class LPSolver:
             
         # Energy Total Offer
         for i in et:
-            addC(lp.lpSum([ebo[j] for j in ebmap[i]]) == eto[i])
+            addC(SUM([ebo[j] for j in ebmap[i]]) == eto[i])
             
         # Reserve Total Offer
         for i in rt:
-            addC(lp.lpSum([rbo[j] for j in rbmap[i]]) == rto[i])
+            addC(SUM([rbo[j] for j in rbmap[i]]) == rto[i])
             
         # Transmission Total offer
         for i in tt:
-            addC(lp.lpSum([tbo[j] for j in tbmap[i]]) == tto[i])
+            addC(SUM([tbo[j] for j in tbmap[i]]) == tto[i])
             addC(tto[i] <= ttm[i])
             addC(tto[i] >= ttm[i] * -1)
             
