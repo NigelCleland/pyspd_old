@@ -134,8 +134,11 @@ class ISO:
             
             # Add Reserve Zones for flows
             if branch.risk == True:
-                self.reserve_zone_transmission[branch.sending_node.RZ.name].append(branch.name)
-                self.reserve_zone_transmission[branch.receiving_node.RZ.name].append(branch.name)
+                # To reduce line length...
+                snRZ = branch.sending_node.RZ.name
+                rnRZ = branch.receiving_node.RZ.name
+                self.reserve_zone_transmission[snRZ].append(branch.name)
+                self.reserve_zone_transmission[rnRZ].append(branch.name)
             
             
             for band in branch.bands:
