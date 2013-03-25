@@ -5,7 +5,7 @@ sys.path.append(os.path.expanduser('~/python/pyspd/pyspd'))
 
 from iso import ISO
 from participants import Station, Node, ReserveZone, Branch
-from participants import InterruptibleLoad
+from participants import InterruptibleLoad, Company
 from model import LPSolver
 
 if __name__ == '__main__':
@@ -28,8 +28,15 @@ if __name__ == '__main__':
     
     HVDC = Branch(hay, ben, SO, capacity=700, risk=True)
     
+    # Create the necessary companies
+    meridian = Company("Meridian")
+    genesis = Company("Genesis")
+    mightyriver = Company("Mighty River Power")
+    
+    nzsteel = Company("NZSteel")
+    
     # Create an IL provider
-    nzst = InterruptibleLoad("NZST", hay, SO, capacity=60)
+    nzst = InterruptibleLoad("NZST", hay, SO, nzsteel, capacity=60)
     nzst_offers = ({'band': '1', 'price': 0.01, 'offer': 45},
                    {'band': '2', 'price': 15, 'offer': 15})
     
@@ -37,9 +44,9 @@ if __name__ == '__main__':
     
     # Create three generation stations, each with spinning capacity
     
-    manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
-    huntly = Station("Huntly", ben, SO, capacity=1000, spinning=True)
-    maraetai = Station("Maraetai", hay, SO, capacity=600, spinning=True)
+    manapouri = Station("Manapouri", ben, SO, meridian, capacity=720, spinning=True)
+    huntly = Station("Huntly", ben, SO, genesis, capacity=1000, spinning=True)
+    maraetai = Station("Maraetai", hay, SO, mightyriver, capacity=600, spinning=True)
     
     # Add three band offers to each station
     

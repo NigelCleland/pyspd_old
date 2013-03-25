@@ -1,6 +1,7 @@
 
 class Station:
-    def __init__(self, name, node, ISO, capacity=0, ebands=3, spinning=False):
+    def __init__(self, name, node, ISO, Company, capacity=0, ebands=3,
+                 spinning=False):
         self.name = name
         self.capacity = capacity
         self.spinning = spinning
@@ -10,6 +11,7 @@ class Station:
         
         node.add_station(self)
         ISO._add_station(self)
+        Company.add_station(self)
         
         self.node = node
         
@@ -174,7 +176,7 @@ class ReserveZone:
         
 class InterruptibleLoad:
 
-    def __init__(self, name, node, ISO, capacity=0):
+    def __init__(self, name, node, ISO, Company, capacity=0):
         self.name = name
         self.node = node
         self.capacity=0
@@ -182,6 +184,7 @@ class InterruptibleLoad:
         
         node.add_intload(self)
         ISO._add_intload(self)
+        Company.add_intload(self)
         
         self.band_names = []
         self.band_prices = {}
@@ -226,7 +229,7 @@ class Company:
         self.intload = []
         self.company_revenue = 0
         
-    def add_station(self, Station)
+    def add_station(self, Station):
         self.stations.append(Station)
         
     def add_intload(self, IL):
