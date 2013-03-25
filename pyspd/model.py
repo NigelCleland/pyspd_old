@@ -127,7 +127,8 @@ class LPSolver:
             
         # Spinning Reserve Constraints
         for i in spin:
-            addC(rto[i] + eto[i] <= etm[i])
+            name = '_'.join([i, 'combined_dispatch'])
+            addC(rto[i] + eto[i] <= etm[i], name)
             
             for j in spin_map[i]:
                 name = '_'.join([i, j, 'prop'])
@@ -151,8 +152,8 @@ class LPSolver:
         for r in rzones:
             n1 = '_'.join([r, 'reserve_price_pos'])
             n2 = '_'.join([r, 'reserve_price_neg'])
-            addC(SUM(rto[i] for i in rz_providers[r]) >= risk[r], n1)
-            addC(SUM(rto[i] for i in rz_providers[r]) * -1 <= risk[r], n2)
+            addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
+#            addC(SUM(rto[i] for i in rz_providers[r]) + risk[r] >= 0.0001, n2)
         
         
     def write_lp(self):
