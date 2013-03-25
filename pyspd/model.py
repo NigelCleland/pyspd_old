@@ -210,6 +210,7 @@ class LPSolver:
         self._energy_dispatch()
         self._reserve_dispatch()
         self._branch_flow()
+        self._log_duals()
         self.dispatch_time = time.time() - begin
         
     def print_time(self):
@@ -266,8 +267,19 @@ class LPSolver:
                     
         for b in dispatch:
             self.ISO.branch_name_map[b].add_flow(dispatch[b])
+            
+    def _log_duals(self):
+        """ Log the dual variables for later analysis"""
+        duals = {}
+        for n in self.lp.constraints:
+            if 'price' not in n:
+                try:
+                    duals[n] = self.lp.constraints[n].pi
+                except:
+                    duals[n] = 0.
         
-        
+        self.duals = duals
+        self.non_zero_duals = {n: duals[n] for n in duals if duals[n] != 0.}
                 
 if __name__ == '__main__':
     pass
