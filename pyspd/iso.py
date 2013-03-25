@@ -67,7 +67,7 @@ class ISO:
         
     def create_offers(self):
         """ Create a full offer for dispatch """
-        self.initialise_empty()
+        #self.initialise_empty()
         self.get_nodal_demand()
         self.get_energy_offers()
         self.get_reserve_offers()

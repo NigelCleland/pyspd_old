@@ -30,7 +30,7 @@ if __name__ == '__main__':
     # Create three generation stations, each with spinning capacity
     
     manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
-    huntly = Station("Huntly", ben, SO, capacity=1000, spinning=False)
+    huntly = Station("Huntly", ben, SO, capacity=1000, spinning=True)
     maraetai = Station("Maraetai", hay, SO, capacity=600, spinning=True)
     
     # Add three band offers to each station

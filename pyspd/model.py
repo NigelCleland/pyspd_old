@@ -9,7 +9,8 @@ class LPSolver:
         self.ISO = ISO
         
     
-    def setup_lp(self, reserve=True, proportion=True, combined=True):
+    def setup_lp(self, reserve=True, proportion=True, combined=True,
+                 transmission=True):
         """ Set up the Linear Program by creating an objective function and 
             passing the requisite variables to it.
         
@@ -54,7 +55,6 @@ class LPSolver:
         rzone_t = self.ISO.reserve_zone_transmission
         
         rz_providers = self.ISO.reserve_zone_reserve
-        
         
         # Set up the linear program        
         
@@ -105,7 +105,6 @@ class LPSolver:
             
         # Transmission band Offer
         for t in tb:
-            
             addC(tbo[t] <= tbm[t])
             addC(tbo[t] >= tbm[t] * -1)
             
@@ -127,14 +126,12 @@ class LPSolver:
             
         # Spinning Reserve Constraints
         for i in spin:
-            if combined:
-                name = '_'.join([i, 'combined_dispatch'])
-                addC(rto[i] + eto[i] <= etm[i], name)
+            name = '_'.join([i, 'combined_dispatch'])
+            addC(rto[i] + eto[i] <= etm[i], name)
             
-            if proportion:
-                for j in spin_map[i]:
-                    name = '_'.join([i, j, 'prop'])
-                    addC(rbo[j] <= rbpr[j] * eto[i], name)
+            for j in spin_map[i]:
+                name = '_'.join([i, j, 'prop'])
+                addC(rbo[j] <= rbpr[j] * eto[i], name)
                 
         
         # Risk Constraints
@@ -151,12 +148,10 @@ class LPSolver:
                 addC(risk[r] >= -1 * tto[t], name)
                 
         # Reserve Dispatch
-        if reserve:
-            for r in rzones:
-                n1 = '_'.join([r, 'reserve_price_pos'])
-                n2 = '_'.join([r, 'reserve_price_neg'])
-                addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
-    #            addC(SUM(rto[i] for i in rz_providers[r]) + risk[r] >= 0.0001, n2)
+        for r in rzones:
+            n1 = '_'.join([r, 'reserve_price_pos'])
+            n2 = '_'.join([r, 'reserve_price_neg'])
+            addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
         
         
     def write_lp(self):
