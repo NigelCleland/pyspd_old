@@ -18,11 +18,13 @@ if __name__ == '__main__':
     
     hay = Node("Haywards", SO, RZNorth, demand=50)
     ben = Node("Benmore", SO, RZSouth, demand=50)
+    ota = Node("Otahuhu", SO, RZNorth, demand=50)
     
     HVDC = Branch(hay, ben, SO, capacity=700)
+    Hay_Ota = Branch(hay, ota, SO, capacity=1000)
     
     manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
-    huntly = Station("Huntly", hay, SO, capacity=1000, spinning=True)
+    huntly = Station("Huntly", ota, SO, capacity=1000, spinning=True)
     maraetai = Station("Maraetai", hay, SO, capacity=600, spinning=True)
     
     manapouri.add_energy_offer(band='1', price=0, offer=300)
