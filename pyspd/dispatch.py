@@ -41,6 +41,12 @@ if __name__ == '__main__':
     
     # Add three band offers to each station
     
+    #man_energy_offers = ({'band':'1', 'price':0, 'offer':300},
+    #                     {'band':'2', 'price':25, 'offer':200},
+    #                     {'band':'3', 'price':50, 'offer':220})
+                         
+    #manapouri.add_multiple_energy_offers(man_energy_offers)
+    
     manapouri.add_energy_offer(band='1', price=0, offer=300)
     manapouri.add_energy_offer(band='2', price=25, offer=200)
     manapouri.add_energy_offer(band='3', price=50, offer=220)

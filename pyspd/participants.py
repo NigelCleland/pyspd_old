@@ -38,6 +38,15 @@ class Station:
             
         else:
             print "Not a spinning station, cannot add reserve offers"
+            
+    def add_multiple_energy_offers(self, offer_dict):
+        for row in offer_dict:
+            self.add_energy_offer(row)
+            
+    
+    def add_multiple_reserve_offers(self, offer_dict):
+        for row in offer_dict:
+            self.add_reserve_offer(row)
         
         
 class Node:
