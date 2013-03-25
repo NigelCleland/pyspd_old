@@ -154,13 +154,16 @@ class LPSolver:
             addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
         
         
-    def write_lp(self):
-        self.lp.writeLP("Test.lp")
+    def write_lp(self, name="Test.lp"):
+        self.lp.writeLP(name)
         
     def solve_lp(self):
         self.lp.solve(lp.COIN_CMD())
-        print "LP Status is:", lp.LpStatus[self.lp.status]
-        print 'Objective function value is:', lp.value(self.lp.objective)
+        if self.lp.status is not 1:
+            print "LP Status is:", lp.LpStatus[self.lp.status]
+            print "Dumping LP"
+            self.write_lp(name="Infeasiable_LP_Debug.lp")
+            print 'Objective function value is:', lp.value(self.lp.objective)
         
         
     def get_values(self):
