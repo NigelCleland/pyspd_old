@@ -88,7 +88,7 @@ class LPSolver:
         
         # Nodal Dispatch
         for n in nd:
-            n1 = '_'.join([n, 'nodal_energy'])
+            n1 = '_'.join([n, 'energy_price'])
             n2 = '_'.join([n, 'nodal_transmission'])
             addC(node_inj[n] == SUM([eto[i] for i in node_map[n]]) - demand[n], n1)
             addC(node_inj[n] == SUM([tto[i] * td[n][i] for i in node_t_map[n]]), n2)
@@ -149,7 +149,7 @@ class LPSolver:
                 
         # Reserve Dispatch
         for r in rzones:
-            n1 = '_'.join([r, 'pos_disp'])
+            n1 = '_'.join([r, 'reserve_price'])
             n2 = '_'.join([r, 'neg_disp'])
             addC(SUM(rto[i] for i in rz_providers[r]) >= risk[r], n1)
             addC(SUM(rto[i] for i in rz_providers[r]) * -1 <= risk[r], n2)
