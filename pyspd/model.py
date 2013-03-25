@@ -100,19 +100,19 @@ class LPSolver:
         
         # Nodal Dispatch
         for n in nd:
-            n1 = '_'.join([n, 'energy_price'])
-            n2 = '_'.join([n, 'nodal_transmission'])
+            n1 = '_'.join([n, 'Energy_Price'])
+            n2 = '_'.join([n, 'Nodal_Transmission'])
             addC(node_inj[n] == SUM([eto[i] for i in node_map[n]]) - demand[n], n1)
             addC(node_inj[n] == SUM([tto[i] * td[n][i] for i in node_t_map[n]]), n2)
         
         # Individual Band Offer
         for i in eb:
-            name = '_'.join([i, 'band_energy'])
+            name = '_'.join([i, 'Band_Energy'])
             addC(ebo[i] <= ebm[i], name)
             
         # Reserve Band Offer
         for j in rb:
-            name = '_'.join([j, 'band_reserve'])
+            name = '_'.join([j, 'Band_Reserve'])
             addC(rbo[j] <= rbm[j], name)
             
         # Transmission band Offer
@@ -122,12 +122,12 @@ class LPSolver:
             
         # Energy Total Offer
         for i in et:
-            name = '_'.join([i, 'total_energy'])
+            name = '_'.join([i, 'Total_Energy'])
             addC(SUM([ebo[j] for j in ebmap[i]]) == eto[i], name)
             
         # Reserve Total Offer
         for i in rt:
-            name = '_'.join([i, 'total_reserve'])
+            name = '_'.join([i, 'Total_Reserve'])
             addC(SUM([rbo[j] for j in rbmap[i]]) == rto[i], name)
             
         # Transmission Total offer
@@ -138,11 +138,11 @@ class LPSolver:
             
         # Spinning Reserve Constraints
         for i in spin:
-            name = '_'.join([i, 'combined_dispatch'])
+            name = '_'.join([i, 'Combined_Dispatch'])
             addC(rto[i] + eto[i] <= etm[i], name)
             
             for j in spin_map[i]:
-                name = '_'.join([i, j, 'prop'])
+                name = '_'.join([j, 'Prop'])
                 addC(rbo[j] <= rbpr[j] * eto[i], name)
                 
         
@@ -161,8 +161,7 @@ class LPSolver:
                 
         # Reserve Dispatch
         for r in rzones:
-            n1 = '_'.join([r, 'reserve_price_pos'])
-            n2 = '_'.join([r, 'reserve_price_neg'])
+            n1 = '_'.join([r, 'Reserve_Price'])
             addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
         
         
@@ -195,7 +194,7 @@ class LPSolver:
         
     def get_prices(self):
         for n in self.lp.constraints:
-            if "price" in n:
+            if "Price" in n:
                 try:
                     print n, self.lp.constraints[n].pi
                 except:
@@ -224,7 +223,7 @@ class LPSolver:
         """ Will return the energy prices to the respective nodes """
         # Get the energy prices
         prices = {n.split('_')[0]: -1* self.lp.constraints[n].pi 
-                    for n in self.lp.constraints if 'energy_price' in n}
+                    for n in self.lp.constraints if 'Energy_Price' in n}
                                
         # Add tonode  
         for node in prices:
@@ -234,7 +233,7 @@ class LPSolver:
     def _reserve_prices(self):
         """ Will return the reserve prices to the respective reserve zones """
         prices = {n.split('_')[0]: self.lp.constraints[n].pi
-                    for n in self.lp.constraints if 'reserve_price' in n}
+                    for n in self.lp.constraints if 'Reserve_Price' in n}
                 
         # Add to Reserve Zone
         for rzone in prices:
@@ -244,7 +243,7 @@ class LPSolver:
     def _energy_dispatch(self):
         """ Returns the energy dispatch to the respective stations """
         dispatch = {v.name.split('_')[-1] : v.varValue
-                    for v in self.lp.variables() if 'energy_total' in v.name}
+                    for v in self.lp.variables() if 'Energy_Total' in v.name}
                         
         for station in dispatch:
             self.ISO.station_name_map[station].add_dispatch(dispatch[station])
@@ -253,7 +252,7 @@ class LPSolver:
     def _reserve_dispatch(self):
         """ Return the reserve dispatch to the respective units """
         dispatch = {v.name.split('_')[-1] : v.varValue
-                    for v in self.lp.variables() if 'reserve_total' in v.name}
+                    for v in self.lp.variables() if 'Reserve_Total' in v.name}
                     
         for unit in dispatch:
             self.ISO.reserve_name_map[unit].add_res_dispatch(dispatch[unit])
@@ -263,7 +262,7 @@ class LPSolver:
         """ Return the transfer on branches """
         dispatch = {'_'.join(v.name.split('_')[-2:]): v.varValue
                     for v in self.lp.variables()
-                    if 'transmission_total' in v.name}
+                    if 'Transmission_Total' in v.name}
                     
         for b in dispatch:
             self.ISO.branch_name_map[b].add_flow(dispatch[b])
@@ -272,7 +271,7 @@ class LPSolver:
         """ Log the dual variables for later analysis"""
         duals = {}
         for n in self.lp.constraints:
-            if 'price' not in n:
+            if 'Price' not in n:
                 try:
                     duals[n] = self.lp.constraints[n].pi
                 except:
@@ -280,6 +279,8 @@ class LPSolver:
         
         self.duals = duals
         self.non_zero_duals = {n: duals[n] for n in duals if duals[n] != 0.}
+        self.negative_duals = {n: duals[n] for n in duals if duals[n] < 0.}
+        
                 
 if __name__ == '__main__':
     pass

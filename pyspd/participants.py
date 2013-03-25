@@ -34,7 +34,7 @@ class Station:
     def add_reserve_offer(self, band='0', price=0, prop=0, offer=0):
         """ Add a reserve offer """
         if self.spinning:
-            rband_name = '_'.join([self.name, 'reserve', band])
+            rband_name = '_'.join([self.name, 'Reserve', band])
             self.rband_names.append(rband_name)
             self.rband_offers[rband_name] = offer
             self.rband_prices[rband_name] = price
