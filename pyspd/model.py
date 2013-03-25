@@ -34,22 +34,22 @@ class LPSolver:
 
         ebm = self.ISO.energy_band_maximum
         rbm = self.ISO.reserve_band_maximum
-        tbm = self.ISO.transmission_band_maximimum
+        tbm = self.ISO.transmission_band_maximum
         
         etm = self.ISO.energy_total_maximum
         ttm = self.ISO.transmission_total_maximum
         rbpr = self.ISO.reserve_band_proportion
         
         spin = self.ISO.spinning_station_names
-        spin_map = self.ISO.spinning_map
+        spin_map = self.ISO.spin_map
         
         node_map = self.ISO.node_energy_map
         demand = self.ISO.node_demand
         
-        node_t_map = self.ISO.node_transmission_map
+        node_t_map = self.ISO.node_t_map
         td = self.ISO.node_transmission_direction
         
-        rzones = self.ISO.reserve_zones
+        rzones = self.ISO.reserve_zone_names
         rzone_g = self.ISO.reserve_zone_generators
         rzone_t = self.ISO.reserve_zone_transmission
         
@@ -88,8 +88,8 @@ class LPSolver:
         
         # Nodal Dispatch
         for n in nd:
-            addC(node_inj[n] == SUM([ebo[i] for i in node_map[n]]) - demand[n])
-            addC(node_inj[n] == SUM([tto[i] * td[i] for i in node_t_map[n]]))
+            addC(node_inj[n] == SUM([eto[i] for i in node_map[n]]) - demand[n])
+            addC(node_inj[n] == SUM([tto[i] * td[n][i] for i in node_t_map[n]]))
         
         # Individual Band Offer
         for i in eb:
@@ -123,6 +123,7 @@ class LPSolver:
             addC(rto[i] + eto[i] <= etm[i])
             
             for j in spin_map[i]:
+                
                 addC(rbo[j] <= rbpr[j] * eto[i])
                 
         
@@ -130,17 +131,24 @@ class LPSolver:
         
         for r in rzones:
             # Generation Risk
-            for i in rzone_g:
+            for i in rzone_g[r]:
                 addC(risk[r] >= eto[i])
         
             # Transmission Risk        
-            for t in rzone_t:
+            for t in rzone_t[r]:
                 addC(risk[r] >= tto[t])
                 
         # Reserve Dispatch
         for r in rzones:
             addC(SUM(rto[i] for i in rz_providers) >= risk[r])
+            addC(SUM(rto[i] for i in rz_providers) * -1 >= risk[r])
         
+        
+    def write_lp(self):
+        self.lp.writeLP("Test.lp")
+        
+    def solve_lp(self):
+        self.lp.solve(lp.COIN_CMD())
                 
                 
 if __name__ == '__main__':

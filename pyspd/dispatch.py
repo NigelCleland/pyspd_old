@@ -43,4 +43,10 @@ if __name__ == '__main__':
     SO.get_nodal_demand()
     SO.get_energy_offers()
     SO.get_reserve_offers()
-
+    SO.get_network()
+    
+    Solver = LPSolver(SO)
+    
+    Solver.setup_lp()
+    Solver.write_lp()
+    Solve.solve_lp()

@@ -54,13 +54,13 @@ class ISO:
         self.node_energy_map = defaultdict(list) # Done
         self.node_demand = {} # Done
         
-        self.node_t_map = defaultdict(list)
-        self.node_transmission_direction = defaultdict(dict)
+        self.node_t_map = defaultdict(list) # Done
+        self.node_transmission_direction = defaultdict(dict) # Done
         
         self.reserve_zones = [] # Done
         self.reserve_zone_names = [] # Done
         self.reserve_zone_generators = defaultdict(list) # Done
-        self.reserve_zone_transmission = defaultdict(list)
+        self.reserve_zone_transmission = defaultdict(list) # Done
         
         self.reserve_zone_reserve = defaultdict(list) # Done
         
@@ -71,6 +71,7 @@ class ISO:
         self.get_nodal_demand()
         self.get_energy_offers()
         self.get_reserve_offers()
+        self.get_network()
         
         
     def get_nodal_demand(self):
@@ -94,8 +95,6 @@ class ISO:
                 
             if station.spinning == True:
                 self.spinning_station_names.append(station.name)
-                for band in station.band_names:
-                    self.spin_map[station.name].append(band)
                     
                     
     def get_reserve_offers(self):
@@ -110,6 +109,7 @@ class ISO:
                 self.reserve_band_proportion[band] = station.rband_proportions[band]
             
                 self.reserve_band_map[station.name].append(band)
+                self.spin_map[station.name].append(band)
                 
                 
         for RZ in self.reserve_zones:
@@ -123,11 +123,25 @@ class ISO:
             self.transmission_totals.append(branch.name)
             self.transmission_total_maximum[branch.name] = branch.capacity
             
+            # Add nodes
+            self.node_t_map[branch.sending_node.name].append(branch.name)
+            self.node_t_map[branch.receiving_node.name].append(branch.name)
+            
+            # Add Transmission directions
+            self.node_transmission_direction[branch.sending_node.name][branch.name] = -1
+            self.node_transmission_direction[branch.receiving_node.name][branch.name] = 1
+            
+            # Add Reserve Zones for flows
+            self.reserve_zone_transmission[branch.sending_node.RZ.name].append(branch.name)
+            self.reserve_zone_transmission[branch.receiving_node.RZ.name].append(branch.name)
+            
+            
             for band in branch.bands:
                 self.transmission_bands.append(band)
                 self.transmission_band_maximum[band] = branch.band_capacity[band]
                 self.transmission_band_loss_factor[band] = branch.band_loss_factor[band]
                 self.transmission_band_map[branch.name].append(band)
+                
         
         
     
@@ -149,6 +163,10 @@ class ISO:
     def _add_reserve_zone(self, RZ):
         self.reserve_zones.append(RZ)
         self.reserve_zone_names.append(RZ.name)
+        
+    
+
+        
         
         
 if __name__ == '__main__':
