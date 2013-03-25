@@ -189,6 +189,7 @@ class LPSolver:
         self._reserve_prices()
         self._energy_dispatch()
         self._reserve_dispatch()
+        self._branch_flow()
         
                     
 
@@ -233,7 +234,12 @@ class LPSolver:
 
     def _branch_flow(self):
         """ Return the transfer on branches """
-        pass
+        dispatch = {'_'.join(v.name.split('_')[-2:]): v.varValue
+                    for v in self.lp.variables()
+                    if 'transmission_total' in v.name}
+                    
+        for b in dispatch:
+            self.ISO.branch_name_map[b].add_flow(dispatch[b])
         
         
                 

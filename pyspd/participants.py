@@ -97,6 +97,7 @@ class Node:
         self.price = price
         self.load_cost()
         
+        
     def load_cost(self):
         self.load_cost = self.demand * self.price
         
@@ -131,6 +132,10 @@ class Branch:
             
             self.bc[band_name] = self.capacity / bands * 1.0
             self.blf[band_name] = 2 * (band + 0.5) * self.bc[band_name] * self.lf
+            
+            
+    def add_flow(self, flow):
+        self.flow = flow
         
         
         

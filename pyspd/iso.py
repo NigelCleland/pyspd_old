@@ -23,6 +23,7 @@ class ISO:
         self.reserve_zone_name_map = {}
         self.station_name_map = {}
         self.reserve_name_map = {}
+        self.branch_name_map = {}
         
         self.intload = []
         self.intload_names = []
@@ -190,6 +191,7 @@ class ISO:
     
     def _add_branch(self, branch):
         self.branches.append(branch)
+        self.branch_name_map[branch.name] = branch
         
         
     def _add_reserve_zone(self, RZ):
