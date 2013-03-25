@@ -69,14 +69,14 @@ class Branch:
         self.sending_node = SN
         self.receiving_node = RN
         self.capacity = capacity
-        self.loss_factor = loss_factor
+        self.lf = loss_factor
         self.ISO = ISO
         self.risk = risk
 
         
         self.bands = []
-        self.band_capacity = {}
-        self.band_loss_factor = {}
+        self.bc = {} # Branch band capacity
+        self.blf = {} # Branch band loss factor
         
         ISO._add_branch(self)
         
@@ -90,8 +90,8 @@ class Branch:
             
             self.bands.append(band_name)
             
-            self.band_capacity[band_name] = self.capacity / bands * 1.0
-            self.band_loss_factor[band_name] = 2 * (band + 0.5) * self.band_capacity[band_name] * self.loss_factor
+            self.bc[band_name] = self.capacity / bands * 1.0
+            self.blf[band_name] = 2 * (band + 0.5) * self.bc[band_name] * self.lf
         
         
         

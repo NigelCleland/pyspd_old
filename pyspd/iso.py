@@ -123,14 +123,18 @@ class ISO:
         for branch in self.branches:
             self.transmission_totals.append(branch.name)
             self.transmission_total_maximum[branch.name] = branch.capacity
-            
+
+            # Node names for adding
+            snN = branch.sending_node.name
+            rnN = branch.receiving_node.name            
             # Add nodes
-            self.node_t_map[branch.sending_node.name].append(branch.name)
-            self.node_t_map[branch.receiving_node.name].append(branch.name)
+            self.node_t_map[snN].append(branch.name)
+            self.node_t_map[rnN].append(branch.name)
             
             # Add Transmission directions
-            self.node_transmission_direction[branch.sending_node.name][branch.name] = 1
-            self.node_transmission_direction[branch.receiving_node.name][branch.name] = -1
+
+            self.node_transmission_direction[snN][branch.name] = 1
+            self.node_transmission_direction[rnN][branch.name] = -1
             
             # Add Reserve Zones for flows
             if branch.risk == True:
@@ -143,8 +147,8 @@ class ISO:
             
             for band in branch.bands:
                 self.transmission_bands.append(band)
-                self.transmission_band_maximum[band] = branch.band_capacity[band]
-                self.transmission_band_loss_factor[band] = branch.band_loss_factor[band]
+                self.transmission_band_maximum[band] = branch.bc[band]
+                self.transmission_band_loss_factor[band] = branch.blf[band]
                 self.transmission_band_map[branch.name].append(band)
                 
         
