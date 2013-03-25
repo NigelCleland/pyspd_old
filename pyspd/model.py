@@ -2,7 +2,7 @@ import pulp as lp
 import numpy as np
 
 class LPSolver:
-    """ Linear Program Solver fo the small models
+    """ Linear Program Solver for the small models
     """
     
     def __init__(self, ISO):
