@@ -124,6 +124,7 @@ class ReserveZone:
         ISO._add_reserve_zone(self)
         self.stations = []
         self.intload = []
+        self.price = 0
     
     def _add_node(self, node):
         
@@ -134,6 +135,10 @@ class ReserveZone:
         
     def _add_intload(self, IL):
         self.intload.append(IL)
+        
+    
+    def add_price(self, price):
+        self.price = price
         
         
 class InterruptibleLoad:

@@ -20,6 +20,7 @@ class ISO:
         self.branches = []
         
         self.node_name_map = {}
+        self.reserve_zone_name_map = {}
         
         self.intload = []
         self.intload_names = []
@@ -190,6 +191,7 @@ class ISO:
     def _add_reserve_zone(self, RZ):
         self.reserve_zones.append(RZ)
         self.reserve_zone_names.append(RZ.name)
+        self.reserve_zone_name_map[RZ.name] = RZ
         
     
     def _add_intload(self, Load):

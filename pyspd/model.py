@@ -183,6 +183,11 @@ class LPSolver:
                 except:
                     print n, "no value"
                     
+                    
+    def return_dispatch(self):
+        self._energy_prices()
+        self._reserve_prices()
+                    
 
     def _energy_prices(self):
         """ Will return the energy prices to the respective nodes """
@@ -190,10 +195,27 @@ class LPSolver:
         prices = {n.split('_')[0]: -1* self.lp.constraints[n].pi 
                     for n in self.lp.constraints if 'energy_price' in n}
                                
-        
         # Add tonode  
         for node in prices:
             self.ISO.node_name_map[node].add_price(prices[node])
+            
+            
+    def _reserve_prices(self):
+        """ Will return the reserve prices to the respective reserve zones """
+        prices = {n.split('_')[0]: self.lp.constraints[n].pi
+                    for n in self.lp.constraints if 'reserve_price' in n}
+                
+        # Add to Reserve Zone
+        for rzone in prices:
+            self.ISO.reserve_zone_name_map[rzone].add_price(prices[rzone])
+            
+
+    def _energy_dispatch(self):
+        """ Returns the energy dispatch to the respective stations """
+        dispatch = {v.split('_')[-1] : v.varValue() 
+                        for v in self.lp.variables() if 'energy_total' in v}
+                        
+        print dispatch
         
         
                 
