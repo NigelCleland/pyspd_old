@@ -229,6 +229,11 @@ class LPSolver:
                     
         for unit in dispatch:
             self.ISO.reserve_name_map[unit].add_res_dispatch(dispatch[unit])
+            
+
+    def _branch_flow(self):
+        """ Return the transfer on branches """
+        pass
         
         
                 

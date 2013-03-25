@@ -95,7 +95,10 @@ class Node:
         
     def add_price(self, price):
         self.price = price
+        self.load_cost()
         
+    def load_cost(self):
+        self.load_cost = self.demand * self.price
         
 class Branch:
 
