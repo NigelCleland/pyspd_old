@@ -182,6 +182,19 @@ class LPSolver:
                     print n, self.lp.constraints[n].pi
                 except:
                     print n, "no value"
+                    
+
+    def _energy_prices(self):
+        """ Will return the energy prices to the respective nodes """
+        # Get the energy prices
+        prices = {n.split('_')[0]: -1* self.lp.constraints[n].pi 
+                    for n in self.lp.constraints if 'energy_price' in n}
+                               
+        
+        # Add tonode  
+        for node in prices:
+            self.ISO.node_name_map[node].add_price(prices[node])
+        
         
                 
 if __name__ == '__main__':

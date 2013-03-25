@@ -19,6 +19,8 @@ class ISO:
         self.nodes = []
         self.branches = []
         
+        self.node_name_map = {}
+        
         self.intload = []
         self.intload_names = []
         
@@ -178,6 +180,7 @@ class ISO:
         
     def _add_node(self, node):
         self.nodes.append(node)
+        self.node_name_map[node.name] = node
         
     
     def _add_branch(self, branch):

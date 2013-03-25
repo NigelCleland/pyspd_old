@@ -61,6 +61,7 @@ class Node:
         self.ISO = ISO
         self.ISO._add_node(self)
         self.RZ._add_node(self)
+        self.price = 0
         
         
     def add_station(self, Station):
@@ -75,6 +76,10 @@ class Node:
     def add_intload(self, Load):
         self.intload.append(Load)
         self.RZ._add_intload(Load)
+        
+        
+    def add_price(self, price):
+        self.price = price
         
         
 class Branch:
