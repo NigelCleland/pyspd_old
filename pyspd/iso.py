@@ -172,6 +172,21 @@ class ISO:
                 self.transmission_band_loss_factor[band] = branch.blf[band]
                 self.transmission_band_map[branch.name].append(band)
                 
+                
+    def pretty_print(self):
+        """ Pretty Printing of the solved dispatch including for analysis """
+        print "---------------------------------------------------------------"
+        print "--------------- Beginning Dispatch Results --------------------"
+        print "---------------------------------------------------------------"
+        print "--------------- Energy Prices ---------------------------------"
+        print "----- Node ----- Price ----------------------------------------"
+        for node in self.nodes:
+            print "    | %s |   $%0.2f/MWh | " % (node.name[:4], node.price)
+        print "--------------- Reserve Prices --------------------------------"
+        print "----- RZone ----- Price ---------------------------------------"
+        for rzone in self.reserve_zones:
+            print "    | %s |   $%0.2f/MWh | " % (rzone.name[:5], rzone.price)
+                
         
         
     
