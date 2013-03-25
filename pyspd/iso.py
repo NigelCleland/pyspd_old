@@ -186,6 +186,15 @@ class ISO:
         print "----- RZone ----- Price ---------------------------------------"
         for rzone in self.reserve_zones:
             print "    | %s |   $%0.2f/MWh | " % (rzone.name[:5], rzone.price)
+        print "--------------- Energy Dispatch -------------------------------"
+        print "----- Station ----- Dispatch ----- Revenue --------------------"
+        for station in self.stations:
+            print "    | %s |   %0.2f MW |  $%0.2f |" % (station.name[:5], 
+                                                  abs(station.energy_dispatch),
+                                                  abs(station.energy_revenue))
+        print "--------------- Reserve Dispatch ------------------------------"
+        print "----- Station ----- Dispatch ----- Revenue --------------------"
+        for unit in self.
                 
         
         

@@ -73,17 +73,17 @@ class LPSolver:
         self.lp = lp.LpProblem("Model Dispatch", lp.LpMinimize)
         
         # Add variables
-        ebo = lp.LpVariable.dicts("energy_band", eb, 0)
-        rbo = lp.LpVariable.dicts("reserve_band", rb, 0)
-        tbo = lp.LpVariable.dicts("transmission_band", tb)
+        ebo = lp.LpVariable.dicts("Energy_Band", eb, 0)
+        rbo = lp.LpVariable.dicts("Reserve_Band", rb, 0)
+        tbo = lp.LpVariable.dicts("Transmission_Band", tb)
         
-        eto = lp.LpVariable.dicts("energy_total", et, 0)
-        rto = lp.LpVariable.dicts("reserve_total", rt, 0)
-        tto = lp.LpVariable.dicts("transmission_total", tt)
+        eto = lp.LpVariable.dicts("Energy_Total", et, 0)
+        rto = lp.LpVariable.dicts("Reserve_Total", rt, 0)
+        tto = lp.LpVariable.dicts("Transmission_Total", tt)
         
-        node_inj = lp.LpVariable.dicts("nodal_inject", nd)
+        node_inj = lp.LpVariable.dicts("Nodal_Inject", nd)
         
-        risk = lp.LpVariable.dicts("risk", rzones)
+        risk = lp.LpVariable.dicts("Risk", rzones)
         
         
         # Map the add Constraint method to a simpler string
