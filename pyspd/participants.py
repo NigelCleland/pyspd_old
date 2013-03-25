@@ -46,6 +46,7 @@ class Node:
     def __init__(self, name, ISO, RZ, demand=0):
         self.name = name
         self.nodal_stations = []
+        self.intload = []
         self.demand = demand
         self.RZ = RZ
         self.ISO = ISO
@@ -57,8 +58,13 @@ class Node:
         self.nodal_stations.append(Station)
         self.RZ._add_station(Station)
         
+        
     def set_demand(self, demand):
         self.demand = demand
+        
+        
+    def add_intload(self, Load):
+        self.intload.append(Load)
         
         
 class Branch:
@@ -110,6 +116,29 @@ class ReserveZone:
         
     def _add_station(self, station):
         self.stations.append(station)
+        
+        
+class InterruptibleLoad:
+
+    def __init__(self, name, node, ISO, capacity=0):
+        self.name = name
+        self.node = node
+        self.capacity=0
+        
+        
+        node.add_intload(self)
+        ISO._add_intload(self)
+        
+        self.band_names = []
+        self.band_prices = {}
+        self.band_offers = {}
+        
+    
+    def add_offer(self, band='0', price=0, offer=0):
+        name = '_'.join([self.name, band])
+        self.band_names.append(name)
+        self.band_prices[name] = price
+        self.band_offers[name] = offer        
         
         
 if __name__ == '__main__':

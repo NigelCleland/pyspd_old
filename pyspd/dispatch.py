@@ -5,6 +5,7 @@ sys.path.append(os.path.expanduser('~/python/pyspd/pyspd'))
 
 from iso import ISO
 from participants import Station, Node, ReserveZone, Branch
+from participants import InterruptibleLoad
 from model import LPSolver
 
 if __name__ == '__main__':
@@ -26,6 +27,9 @@ if __name__ == '__main__':
     # Create a single transmission branch between them
     
     HVDC = Branch(hay, ben, SO, capacity=700, risk=True)
+    
+    # Create an IL provider
+    nzst = InterruptibleLoad("NZST", hay, SO, capacity=60)
     
     # Create three generation stations, each with spinning capacity
     

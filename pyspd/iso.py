@@ -19,6 +19,9 @@ class ISO:
         self.nodes = []
         self.branches = []
         
+        self.intload = []
+        self.intload_names = []
+        
     def initialise_empty(self):
         """ Initialise an empty dispatch """
         
@@ -174,7 +177,9 @@ class ISO:
         self.reserve_zone_names.append(RZ.name)
         
     
-
+    def _add_intload(self, Load):
+        self.intload.append(Load)
+        self.intload_names.append(Load)
         
         
         
