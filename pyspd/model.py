@@ -185,6 +185,7 @@ class LPSolver:
                     
                     
     def return_dispatch(self):
+        """ Return the entire dispatch from the solved linear program """
         self._energy_prices()
         self._reserve_prices()
         self._energy_dispatch()
