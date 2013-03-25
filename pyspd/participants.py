@@ -62,6 +62,14 @@ class Station:
 
     def add_res_dispatch(self, dispatch):
         self.reserve_dispatch = dispatch
+        self.calculate_reserve_revenue()
+        self.calculate_total_revenue()
+        
+    def calculate_reserve_revenue(self):
+        self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price
+        
+    def calculate_total_revenue(self):
+        self.total_revenue = self.reserve_revenue + self.energy_revenue
         
         
 class Node:
@@ -192,7 +200,11 @@ class InterruptibleLoad:
             
             
     def add_res_dispatch(self, dispatch):
-        self.reserve_dispatch = dispatch     
+        self.reserve_dispatch = dispatch 
+        self.calculate_reserve_revenue()
+        
+    def calculate_reserve_revenue(self):
+        self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price    
         
         
 if __name__ == '__main__':
