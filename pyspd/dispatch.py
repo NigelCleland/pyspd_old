@@ -30,6 +30,8 @@ if __name__ == '__main__':
     
     # Create an IL provider
     nzst = InterruptibleLoad("NZST", hay, SO, capacity=60)
+    nzst.add_offer('1', 0.01, 45)
+    nzst.add_offer('2', 15, 15)
     
     # Create three generation stations, each with spinning capacity
     
