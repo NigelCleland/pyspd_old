@@ -19,9 +19,11 @@ if __name__ == '__main__':
     hay = Node("Haywards", SO, RZNorth, demand=50)
     ben = Node("Benmore", SO, RZSouth, demand=50)
     ota = Node("Otahuhu", SO, RZNorth, demand=50)
+    kik = Node("Kik", SO, RZSouth, demand=50)
     
-    HVDC = Branch(hay, ben, SO, capacity=700)
+    HVDC = Branch(hay, ben, SO, capacity=700, risk=True)
     Hay_Ota = Branch(hay, ota, SO, capacity=1000)
+    Ben_kik = Branch(ben, kik, SO, capacity=1000)
     
     manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
     huntly = Station("Huntly", ota, SO, capacity=1000, spinning=True)
@@ -31,19 +33,19 @@ if __name__ == '__main__':
     manapouri.add_energy_offer(band='2', price=25, offer=200)
     manapouri.add_energy_offer(band='3', price=50, offer=220)
     
-    huntly.add_energy_offer(band='1', price=5, offer=300)
+    huntly.add_energy_offer(band='1', price=20, offer=300)
     huntly.add_energy_offer(band='2', price=25, offer=200)
     huntly.add_energy_offer(band='3', price=50, offer=220)
     
-    maraetai.add_energy_offer(band='1', price=5, offer=300)
+    maraetai.add_energy_offer(band='1', price=2.5, offer=300)
     maraetai.add_energy_offer(band='2', price=25, offer=200)
     maraetai.add_energy_offer(band='3', price=50, offer=220)
     
-    manapouri.add_reserve_offer(band='1', price=1, offer=50, proportion=1)
-    manapouri.add_reserve_offer(band='2', price=2, offer=50, proportion=2)
+    manapouri.add_reserve_offer(band='1', price=1, offer=50, proportion=2)
+    manapouri.add_reserve_offer(band='2', price=1, offer=150, proportion=2)
     
-    maraetai.add_reserve_offer(band='1', price=1, offer=50, proportion=2)
-    maraetai.add_reserve_offer(band='2', price=5, offer=50, proportion=2)
+    maraetai.add_reserve_offer(band='1', price=1, offer=100, proportion=2)
+    maraetai.add_reserve_offer(band='2', price=1, offer=100, proportion=2)
     
     SO.get_nodal_demand()
     SO.get_energy_offers()

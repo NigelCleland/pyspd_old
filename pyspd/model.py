@@ -67,7 +67,7 @@ class LPSolver:
         
         eto = lp.LpVariable.dicts("energy_total", et, 0)
         rto = lp.LpVariable.dicts("reserve_total", rt, 0)
-        tto = lp.LpVariable.dicts("transmission_total", tt, 0)
+        tto = lp.LpVariable.dicts("transmission_total", tt)
         
         node_inj = lp.LpVariable.dicts("nodal_inject", nd)
         
@@ -145,12 +145,12 @@ class LPSolver:
             # Transmission Risk        
             for t in rzone_t[r]:
                 name = '_'.join([r, t])
-                addC(risk[r] >= tto[t], name)
+                addC(risk[r] >= -1 * tto[t], name)
                 
         # Reserve Dispatch
         for r in rzones:
-            n1 = '_'.join([r, 'reserve_price'])
-            n2 = '_'.join([r, 'neg_disp'])
+            n1 = '_'.join([r, 'reserve_price_pos'])
+            n2 = '_'.join([r, 'reserve_price_neg'])
             addC(SUM(rto[i] for i in rz_providers[r]) >= risk[r], n1)
             addC(SUM(rto[i] for i in rz_providers[r]) * -1 <= risk[r], n2)
         
@@ -175,6 +175,14 @@ class LPSolver:
                 print n, self.lp.constraints[n].pi
             except:
                 print n, 0
+        
+    def get_prices(self):
+        for n in self.lp.constraints:
+            if "price" in n:
+                try:
+                    print n, self.lp.constraints[n].pi
+                except:
+                    print n, "no value"
         
                 
 if __name__ == '__main__':

@@ -129,12 +129,13 @@ class ISO:
             self.node_t_map[branch.receiving_node.name].append(branch.name)
             
             # Add Transmission directions
-            self.node_transmission_direction[branch.sending_node.name][branch.name] = -1
-            self.node_transmission_direction[branch.receiving_node.name][branch.name] = 1
+            self.node_transmission_direction[branch.sending_node.name][branch.name] = 1
+            self.node_transmission_direction[branch.receiving_node.name][branch.name] = -1
             
             # Add Reserve Zones for flows
-            self.reserve_zone_transmission[branch.sending_node.RZ.name].append(branch.name)
-            self.reserve_zone_transmission[branch.receiving_node.RZ.name].append(branch.name)
+            if branch.risk == True:
+                self.reserve_zone_transmission[branch.sending_node.RZ.name].append(branch.name)
+                self.reserve_zone_transmission[branch.receiving_node.RZ.name].append(branch.name)
             
             
             for band in branch.bands:

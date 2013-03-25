@@ -63,13 +63,15 @@ class Node:
         
 class Branch:
 
-    def __init__(self, SN, RN, ISO, capacity=0, loss_factor=0.0001, bands=3):
+    def __init__(self, SN, RN, ISO, capacity=0, loss_factor=0.0001, bands=3,
+                 risk=False):
         self.name = '_'.join([SN.name, RN.name])
         self.sending_node = SN
         self.receiving_node = RN
         self.capacity = capacity
         self.loss_factor = loss_factor
         self.ISO = ISO
+        self.risk = risk
 
         
         self.bands = []
