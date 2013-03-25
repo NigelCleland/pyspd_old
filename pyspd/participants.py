@@ -52,12 +52,16 @@ class Station:
             
             
     def add_dispatch(self, dispatch):
-        self.dispatch = dispatch
-        self.calculate_revenue()
+        self.energy_dispatch = dispatch
+        self.calculate_energy_revenue()
         
         
-    def calculate_revenue(self):
-        self.revenue = self.dispatch * self.node.price
+    def calculate_energy_revenue(self):
+        self.energy_revenue = self.energy_dispatch * self.node.price
+        
+
+    def add_res_dispatch(self, dispatch):
+        self.reserve_dispatch = dispatch
         
         
 class Node:
@@ -176,7 +180,11 @@ class InterruptibleLoad:
         
     def add_multiple_offers(self, offer_dict):
         for row in offer_dict:
-            self.add_offer(**row)        
+            self.add_offer(**row)   
+            
+            
+    def add_res_dispatch(self, dispatch):
+        self.reserve_dispatch = dispatch     
         
         
 if __name__ == '__main__':

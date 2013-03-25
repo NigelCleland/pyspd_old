@@ -188,6 +188,7 @@ class LPSolver:
         self._energy_prices()
         self._reserve_prices()
         self._energy_dispatch()
+        self._reserve_dispatch()
         
                     
 
@@ -215,10 +216,19 @@ class LPSolver:
     def _energy_dispatch(self):
         """ Returns the energy dispatch to the respective stations """
         dispatch = {v.name.split('_')[-1] : v.varValue
-                        for v in self.lp.variables() if 'energy_total' in v.name}
+                    for v in self.lp.variables() if 'energy_total' in v.name}
                         
         for station in dispatch:
             self.ISO.station_name_map[station].add_dispatch(dispatch[station])
+            
+            
+    def _reserve_dispatch(self):
+        """ Return the reserve dispatch to the respective units """
+        dispatch = {v.name.split('_')[-1] : v.varValue
+                    for v in self.lp.variables() if 'reserve_total' in v.name}
+                    
+        for unit in dispatch:
+            self.ISO.reserve_name_map[unit].add_res_dispatch(dispatch[unit])
         
         
                 

@@ -22,6 +22,7 @@ class ISO:
         self.node_name_map = {}
         self.reserve_zone_name_map = {}
         self.station_name_map = {}
+        self.reserve_name_map = {}
         
         self.intload = []
         self.intload_names = []
@@ -179,6 +180,7 @@ class ISO:
         self.station_name_map[station.name] = station
         if station.spinning:
             self.spinning_stations.append(station)
+            self.reserve_name_map[station.name] = station
         
         
     def _add_node(self, node):
@@ -199,7 +201,7 @@ class ISO:
     def _add_intload(self, Load):
         self.intload.append(Load)
         self.intload_names.append(Load)
-        
+        self.reserve_name_map[Load.name] = Load
         
         
 if __name__ == '__main__':
