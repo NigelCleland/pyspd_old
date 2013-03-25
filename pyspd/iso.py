@@ -115,11 +115,23 @@ class ISO:
                 self.reserve_band_map[station.name].append(band)
                 self.spin_map[station.name].append(band)
                 
+        for il in self.intload:
+            self.reserve_totals.append(il.name)
+            
+            for band in il.band_names:
+                self.reserve_bands.append(band)
+                self.reserve_band_prices[band] = il.band_prices[band]
+                self.reserve_band_maximum[band] = il.band_offers[band]
+                self.reserve_band_map[il.name].append(band)
+                
                 
         for RZ in self.reserve_zones:
             for station in RZ.stations:
                 self.reserve_zone_generators[RZ.name].append(station.name)
                 self.reserve_zone_reserve[RZ.name].append(station.name)
+                
+            for il in RZ.intload:
+                self.reserve_zone_reserve[RZ.name].append(il.name)
                 
             
     def get_network(self):

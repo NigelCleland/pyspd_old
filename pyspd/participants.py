@@ -65,6 +65,7 @@ class Node:
         
     def add_intload(self, Load):
         self.intload.append(Load)
+        self.RZ._add_intload(Load)
         
         
 class Branch:
@@ -108,7 +109,7 @@ class ReserveZone:
         self.nodes = []
         ISO._add_reserve_zone(self)
         self.stations = []
-        
+        self.intload = []
     
     def _add_node(self, node):
         
@@ -116,6 +117,9 @@ class ReserveZone:
         
     def _add_station(self, station):
         self.stations.append(station)
+        
+    def _add_intload(self, IL):
+        self.intload.append(IL)
         
         
 class InterruptibleLoad:
