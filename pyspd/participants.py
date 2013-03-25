@@ -205,6 +205,36 @@ class InterruptibleLoad:
         
     def calculate_reserve_revenue(self):
         self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price    
+    
+    
+class Company:
+    """
+    Company
+    -------
+    
+    Company master class, consists of a number of stations which may be spread
+    across a variety of nodes.
+    
+    Contains methods for calculating total revenue, total dispatch,
+    nodal dispatch, nodal revenue etc.
+    
+    """
+
+    def __init__(self, name):
+        self.name = name
+        self.stations = []
+        self.intload = []
+        self.company_revenue = 0
+        
+    def add_station(self, Station)
+        self.stations.append(Station)
+        
+    def add_intload(self, IL):
+        self.intload.append(IL)
+        
+    def calculate_company_revenue(self):
+        self.company_revenue = (sum([s.total_revenue for s in self.stations]) +
+                                sum([s.reserve_revenue for s in self.intload]))
         
         
 if __name__ == '__main__':
