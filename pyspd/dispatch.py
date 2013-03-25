@@ -30,8 +30,10 @@ if __name__ == '__main__':
     
     # Create an IL provider
     nzst = InterruptibleLoad("NZST", hay, SO, capacity=60)
-    nzst.add_offer('1', 0.01, 45)
-    nzst.add_offer('2', 15, 15)
+    nzst_offers = ({'band': '1', 'price': 0.01, 'offer': 45},
+                   {'band': '2', 'price': 15, 'offer': 15})
+    
+    nzst.add_multiple_offers(nzst_offers)
     
     # Create three generation stations, each with spinning capacity
     
@@ -41,31 +43,35 @@ if __name__ == '__main__':
     
     # Add three band offers to each station
     
-    #man_energy_offers = ({'band':'1', 'price':0, 'offer':300},
-    #                     {'band':'2', 'price':25, 'offer':200},
-    #                     {'band':'3', 'price':50, 'offer':220})
-                         
-    #manapouri.add_multiple_energy_offers(man_energy_offers)
+    man_energy_offers = ({'band':'1', 'price':0, 'offer':300},
+                         {'band':'2', 'price':25, 'offer':200},
+                         {'band':'3', 'price':50, 'offer':220})
     
-    manapouri.add_energy_offer(band='1', price=0, offer=300)
-    manapouri.add_energy_offer(band='2', price=25, offer=200)
-    manapouri.add_energy_offer(band='3', price=50, offer=220)
+    hly_energy_offers = ({'band': '1', 'price': 20, 'offer': 300},
+                         {'band': '2', 'price': 25, 'offer': 200},
+                         {'band': '3', 'price': 50, 'offer': 220})
     
-    huntly.add_energy_offer(band='1', price=20, offer=300)
-    huntly.add_energy_offer(band='2', price=25, offer=200)
-    huntly.add_energy_offer(band='3', price=50, offer=220)
+    mti_energy_offers = ({'band': '1', 'price': 2, 'offer': 300},
+                         {'band': '2', 'price': 25, 'offer': 200},
+                         {'band': '3', 'price': 50, 'offer': 220})
     
-    maraetai.add_energy_offer(band='1', price=2, offer=300)
-    maraetai.add_energy_offer(band='2', price=25, offer=200)
-    maraetai.add_energy_offer(band='3', price=50, offer=220)
+    
+    manapouri.add_multiple_energy_offers(man_energy_offers)
+    huntly.add_multiple_energy_offers(hly_energy_offers)
+    maraetai.add_multiple_energy_offers(mti_energy_offers)    
+
     
     # Add two band reserve offers to two of the stations
     
-    manapouri.add_reserve_offer(band='1', price=0.5, offer=50, proportion=2)
-    manapouri.add_reserve_offer(band='2', price=0.5, offer=150, proportion=2)
+    man_reserve_offers = ({'band': '1', 'price': 0.5, 'offer': 50, 'prop': 2},
+                          {'band': '2', 'price': 0.5, 'offer': 150, 'prop': 2})
     
-    maraetai.add_reserve_offer(band='1', price=0.8, offer=150, proportion=2)
-    maraetai.add_reserve_offer(band='2', price=5, offer=100, proportion=2)
+    mti_reserve_offers = ({'band': '1', 'price': 0.8, 'offer': 150, 'prop': 2},
+                          {'band': '2', 'price': 5, 'offer': 500, 'prop': 2})
+                          
+    manapouri.add_multiple_reserve_offers(man_reserve_offers)
+    maraetai.add_multiple_reserve_offers(mti_reserve_offers)
+    
     
     # Create the offers
     SO.create_offers()

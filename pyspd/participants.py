@@ -27,26 +27,26 @@ class Station:
         self.band_offers[band_name] = offer
         self.band_prices[band_name] = price
         
-    def add_reserve_offer(self, band='0', price=0, proportion=0, offer=0):
+    def add_reserve_offer(self, band='0', price=0, prop=0, offer=0):
         """ Add a reserve offer """
         if self.spinning:
             rband_name = '_'.join([self.name, 'reserve', band])
             self.rband_names.append(rband_name)
             self.rband_offers[rband_name] = offer
             self.rband_prices[rband_name] = price
-            self.rband_proportions[rband_name] = proportion
+            self.rband_proportions[rband_name] = prop
             
         else:
             print "Not a spinning station, cannot add reserve offers"
             
     def add_multiple_energy_offers(self, offer_dict):
         for row in offer_dict:
-            self.add_energy_offer(row)
+            self.add_energy_offer(**row)
             
     
     def add_multiple_reserve_offers(self, offer_dict):
         for row in offer_dict:
-            self.add_reserve_offer(row)
+            self.add_reserve_offer(**row)
         
         
 class Node:
@@ -151,7 +151,11 @@ class InterruptibleLoad:
         name = '_'.join([self.name, band])
         self.band_names.append(name)
         self.band_prices[name] = price
-        self.band_offers[name] = offer        
+        self.band_offers[name] = offer
+        
+    def add_multiple_offers(self, offer_dict):
+        for row in offer_dict:
+            self.add_offer(**row)        
         
         
 if __name__ == '__main__':
