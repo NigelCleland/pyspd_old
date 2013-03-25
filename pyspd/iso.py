@@ -21,6 +21,7 @@ class ISO:
         
         self.node_name_map = {}
         self.reserve_zone_name_map = {}
+        self.station_name_map = {}
         
         self.intload = []
         self.intload_names = []
@@ -175,6 +176,7 @@ class ISO:
     def _add_station(self, station):
         """ Add a generation station to the ISO """
         self.stations.append(station)
+        self.station_name_map[station.name] = station
         if station.spinning:
             self.spinning_stations.append(station)
         

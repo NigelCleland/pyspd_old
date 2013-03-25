@@ -11,6 +11,8 @@ class Station:
         node.add_station(self)
         ISO._add_station(self)
         
+        self.node = node
+        
         
         if self.spinning:
             self.rband_names = []
@@ -47,6 +49,15 @@ class Station:
     def add_multiple_reserve_offers(self, offer_dict):
         for row in offer_dict:
             self.add_reserve_offer(**row)
+            
+            
+    def add_dispatch(self, dispatch):
+        self.dispatch = dispatch
+        self.calculate_revenue()
+        
+        
+    def calculate_revenue(self):
+        self.revenue = self.dispatch * self.node.price
         
         
 class Node:
