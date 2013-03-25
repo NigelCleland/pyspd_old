@@ -13,21 +13,27 @@ if __name__ == '__main__':
     
     SO = ISO("System Operator")
     
+    # Add two Reserve Zones
+    
     RZNorth = ReserveZone("North", SO)
     RZSouth = ReserveZone("South", SO)
     
+    # Create a two node system
+    
     hay = Node("Haywards", SO, RZNorth, demand=50)
     ben = Node("Benmore", SO, RZSouth, demand=50)
-    #ota = Node("Otahuhu", SO, RZNorth, demand=50)
-    #kik = Node("Kik", SO, RZSouth, demand=50)
+    
+    # Create a single transmission branch between them
     
     HVDC = Branch(hay, ben, SO, capacity=700, risk=True)
-    #Hay_Ota = Branch(hay, ota, SO, capacity=1000)
-    #Ben_kik = Branch(ben, kik, SO, capacity=1000)
+    
+    # Create three generation stations, each with spinning capacity
     
     manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
-    huntly = Station("Huntly", ben, SO, capacity=1000, spinning=True)
+    huntly = Station("Huntly", ben, SO, capacity=1000, spinning=False)
     maraetai = Station("Maraetai", hay, SO, capacity=600, spinning=True)
+    
+    # Add three band offers to each station
     
     manapouri.add_energy_offer(band='1', price=0, offer=300)
     manapouri.add_energy_offer(band='2', price=25, offer=200)
@@ -37,20 +43,22 @@ if __name__ == '__main__':
     huntly.add_energy_offer(band='2', price=25, offer=200)
     huntly.add_energy_offer(band='3', price=50, offer=220)
     
-    maraetai.add_energy_offer(band='1', price=1, offer=300)
+    maraetai.add_energy_offer(band='1', price=2, offer=300)
     maraetai.add_energy_offer(band='2', price=25, offer=200)
     maraetai.add_energy_offer(band='3', price=50, offer=220)
     
-    manapouri.add_reserve_offer(band='1', price=1, offer=50, proportion=2)
-    manapouri.add_reserve_offer(band='2', price=1, offer=150, proportion=2)
+    # Add two band reserve offers to two of the stations
+    
+    manapouri.add_reserve_offer(band='1', price=0.5, offer=50, proportion=2)
+    manapouri.add_reserve_offer(band='2', price=0.5, offer=150, proportion=2)
     
     maraetai.add_reserve_offer(band='1', price=0.8, offer=150, proportion=2)
     maraetai.add_reserve_offer(band='2', price=5, offer=100, proportion=2)
     
-    SO.get_nodal_demand()
-    SO.get_energy_offers()
-    SO.get_reserve_offers()
-    SO.get_network()
+    # Create the offers
+    SO.create_offers()
+    
+    # Solve the linear program
     
     Solver = LPSolver(SO)
     
