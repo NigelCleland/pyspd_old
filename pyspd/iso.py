@@ -92,6 +92,7 @@ class ISO:
                 self.energy_bands.append(band)
                 self.energy_band_prices[band] = station.band_prices[band]
                 self.energy_band_maximum[band] = station.band_offers[band]
+                self.energy_band_map[station.name].append(band)
                 
             if station.spinning == True:
                 self.spinning_station_names.append(station.name)

@@ -65,9 +65,9 @@ class LPSolver:
         rbo = lp.LpVariable.dicts("reserve_band", rb, 0)
         tbo = lp.LpVariable.dicts("transmission_band", tb)
         
-        eto = lp.LpVariable.dicts("energy_total", et)
-        rto = lp.LpVariable.dicts("reserve_total", rt)
-        tto = lp.LpVariable.dicts("transmission_total", tt)
+        eto = lp.LpVariable.dicts("energy_total", et, 0)
+        rto = lp.LpVariable.dicts("reserve_total", rt, 0)
+        tto = lp.LpVariable.dicts("transmission_total", tt, 0)
         
         node_inj = lp.LpVariable.dicts("nodal_inject", nd)
         
@@ -88,29 +88,36 @@ class LPSolver:
         
         # Nodal Dispatch
         for n in nd:
-            addC(node_inj[n] == SUM([eto[i] for i in node_map[n]]) - demand[n])
-            addC(node_inj[n] == SUM([tto[i] * td[n][i] for i in node_t_map[n]]))
+            n1 = '_'.join([n, 'nodal_energy'])
+            n2 = '_'.join([n, 'nodal_transmission'])
+            addC(node_inj[n] == SUM([eto[i] for i in node_map[n]]) - demand[n], n1)
+            addC(node_inj[n] == SUM([tto[i] * td[n][i] for i in node_t_map[n]]), n2)
         
         # Individual Band Offer
         for i in eb:
-            addC(ebo[i] <= ebm[i])
+            name = '_'.join([i, 'band_energy'])
+            addC(ebo[i] <= ebm[i], name)
             
         # Reserve Band Offer
         for j in rb:
-            addC(rbo[j] <= rbm[j])
+            name = '_'.join([j, 'band_reserve'])
+            addC(rbo[j] <= rbm[j], name)
             
         # Transmission band Offer
         for t in tb:
+            
             addC(tbo[t] <= tbm[t])
             addC(tbo[t] >= tbm[t] * -1)
             
         # Energy Total Offer
         for i in et:
-            addC(SUM([ebo[j] for j in ebmap[i]]) == eto[i])
+            name = '_'.join([i, 'total_energy'])
+            addC(SUM([ebo[j] for j in ebmap[i]]) == eto[i], name)
             
         # Reserve Total Offer
         for i in rt:
-            addC(SUM([rbo[j] for j in rbmap[i]]) == rto[i])
+            name = '_'.join([i, 'total_reserve'])
+            addC(SUM([rbo[j] for j in rbmap[i]]) == rto[i], name)
             
         # Transmission Total offer
         for i in tt:
@@ -123,8 +130,8 @@ class LPSolver:
             addC(rto[i] + eto[i] <= etm[i])
             
             for j in spin_map[i]:
-                
-                addC(rbo[j] <= rbpr[j] * eto[i])
+                name = '_'.join([i, j, 'prop'])
+                addC(rbo[j] <= rbpr[j] * eto[i], name)
                 
         
         # Risk Constraints
@@ -132,16 +139,20 @@ class LPSolver:
         for r in rzones:
             # Generation Risk
             for i in rzone_g[r]:
-                addC(risk[r] >= eto[i])
+                name = '_'.join([r, i])
+                addC(risk[r] >= eto[i], name)
         
             # Transmission Risk        
             for t in rzone_t[r]:
-                addC(risk[r] >= tto[t])
+                name = '_'.join([r, t])
+                addC(risk[r] >= tto[t], name)
                 
         # Reserve Dispatch
         for r in rzones:
-            addC(SUM(rto[i] for i in rz_providers) >= risk[r])
-            addC(SUM(rto[i] for i in rz_providers) * -1 >= risk[r])
+            n1 = '_'.join([r, 'pos_disp'])
+            n2 = '_'.join([r, 'neg_disp'])
+            addC(SUM(rto[i] for i in rz_providers[r]) >= risk[r], n1)
+            addC(SUM(rto[i] for i in rz_providers[r]) * -1 <= risk[r], n2)
         
         
     def write_lp(self):
@@ -149,7 +160,22 @@ class LPSolver:
         
     def solve_lp(self):
         self.lp.solve(lp.COIN_CMD())
-                
+        print "LP Status is:", lp.LpStatus[self.lp.status]
+        print 'Objective function value is:', lp.value(self.lp.objective)
+        
+        
+    def get_values(self):
+        for val in self.lp.variables():
+            print val, val.varValue
+            
+            
+    def get_shadow_values(self):
+        for n in self.lp.constraints:
+            try:
+                print n, self.lp.constraints[n].pi
+            except:
+                print n, 0
+        
                 
 if __name__ == '__main__':
     pass
