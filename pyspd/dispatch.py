@@ -87,7 +87,5 @@ if __name__ == '__main__':
     
     Solver = LPSolver(SO)
     
-    Solver.setup_lp()
-    Solver.solve_lp()
+    Solver.full_setup_and_solve()
     
-    Solver.return_dispatch()

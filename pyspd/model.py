@@ -1,5 +1,6 @@
 import pulp as lp
 import numpy as np
+import time
 
 class LPSolver:
     """ Linear Program Solver for the small models
@@ -8,6 +9,17 @@ class LPSolver:
     def __init__(self, ISO):
         self.ISO = ISO
         
+        
+    def full_setup_and_solve(self, reserve=True, proportion=True,
+                             combined=True, transmission=True):
+                             
+        begin = time.time()
+        self.setup_lp(reserve=reserve, proportion=proportion,
+                      combined=combined, transmission=transmission)
+        self.setup_time = time.time() - begin
+        
+        self.solve_lp()
+        self.return_dispatch()
     
     def setup_lp(self, reserve=True, proportion=True, combined=True,
                  transmission=True):
@@ -158,7 +170,10 @@ class LPSolver:
         self.lp.writeLP(name)
         
     def solve_lp(self):
+        begin = time.time()
         self.lp.solve(lp.COIN_CMD())
+        solved = time.time() - begin
+        self.solution_time = solved
         if self.lp.status is not 1:
             print "LP Status is:", lp.LpStatus[self.lp.status]
             print "Dumping LP"
@@ -189,11 +204,18 @@ class LPSolver:
                     
     def return_dispatch(self):
         """ Return the entire dispatch from the solved linear program """
+        begin = time.time()
         self._energy_prices()
         self._reserve_prices()
         self._energy_dispatch()
         self._reserve_dispatch()
         self._branch_flow()
+        self.dispatch_time = time.time() - begin
+        
+    def print_time(self):
+        print "Model created in %0.3f ms" % float(self.setup_time * 1000)
+        print "Model solved in %0.3f ms" % float(self.solution_time * 1000)
+        print "Model post process in %0.3f ms" % float(self.dispatch_time * 1000)
         
                     
 
