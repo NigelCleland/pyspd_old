@@ -194,7 +194,6 @@ class ISO:
                                                   abs(station.energy_revenue))
         print "--------------- Reserve Dispatch ------------------------------"
         print "----- Station ----- Dispatch ----- Revenue --------------------"
-        for unit in self.
                 
         
         
