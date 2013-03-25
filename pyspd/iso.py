@@ -24,27 +24,28 @@ class ISO:
         
         self.energy_bands = [] # Done
         self.reserve_bands = [] # Done
-        self.transmission_bands = []
+        self.transmission_bands = [] # Done
         self.all_nodes = [] # Done
         
         self.energy_totals = [] # Done
         self.reserve_totals = [] # Done
-        self.transmission_totals = []
+        self.transmission_totals = [] # Done
         
         self.energy_band_map = defaultdict(list) # Done
         self.reserve_band_map = defaultdict(list) # Done
-        self.transmission_band_map = defaultdict(list)
+        self.transmission_band_map = defaultdict(list) # Done
         
         self.energy_band_prices = {} # Done
         self.reserve_band_prices = {} # Done
         
         self.energy_band_maximum = {} # Done
         self.reserve_band_maximum = {} # Done
-        self.transmission_band_maximum = {}
+        self.transmission_band_maximum = {} # Done
         
         self.energy_total_maximum = {} # Done
-        self.transmission_total_maximum = {}
+        self.transmission_total_maximum = {} # Done
         self.reserve_band_proportion = {} # Done
+        self.transmission_band_loss_factor = {} # Done
         
         self.spinning_stations = [] # Done
         self.spinning_station_names = [] # Done
@@ -58,12 +59,18 @@ class ISO:
         
         self.reserve_zones = [] # Done
         self.reserve_zone_names = [] # Done
-        self.reserve_zone_generators = defaultdict(list)
+        self.reserve_zone_generators = defaultdict(list) # Done
         self.reserve_zone_transmission = defaultdict(list)
+        
+        self.reserve_zone_reserve = defaultdict(list) # Done
         
         
     def create_offers(self):
         """ Create a full offer for dispatch """
+        self.initialise_empty()
+        self.get_nodal_demand()
+        self.get_energy_offers()
+        self.get_reserve_offers()
         
         
     def get_nodal_demand(self):
@@ -103,7 +110,25 @@ class ISO:
                 self.reserve_band_proportion[band] = station.rband_proportions[band]
             
                 self.reserve_band_map[station.name].append(band)
+                
+                
+        for RZ in self.reserve_zones:
+            for station in RZ.stations:
+                self.reserve_zone_generators[RZ.name].append(station.name)
+                self.reserve_zone_reserve[RZ.name].append(station.name)
+                
             
+    def get_network(self):
+        for branch in self.branches:
+            self.transmission_totals.append(branch.name)
+            self.transmission_total_maximum[branch.name] = branch.capacity
+            
+            for band in branch.bands:
+                self.transmission_bands.append(band)
+                self.transmission_band_maximum[band] = branch.band_capacity[band]
+                self.transmission_band_loss_factor[band] = branch.band_loss_factor[band]
+                self.transmission_band_map[branch.name].append(band)
+        
         
     
     def _add_station(self, station):
@@ -119,6 +144,7 @@ class ISO:
     
     def _add_branch(self, branch):
         self.branches.append(branch)
+        
         
     def _add_reserve_zone(self, RZ):
         self.reserve_zones.append(RZ)

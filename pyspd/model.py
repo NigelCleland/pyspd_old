@@ -53,6 +53,8 @@ class LPSolver:
         rzone_g = self.ISO.reserve_zone_generators
         rzone_t = self.ISO.reserve_zone_transmission
         
+        rz_providers = self.ISO.reserve_zone_reserve
+        
         
         # Set up the linear program        
         
@@ -134,6 +136,10 @@ class LPSolver:
             # Transmission Risk        
             for t in rzone_t:
                 addC(risk[r] >= tto[t])
+                
+        # Reserve Dispatch
+        for r in rzones:
+            addC(SUM(rto[i] for i in rz_providers) >= risk[r])
         
                 
                 

@@ -47,12 +47,15 @@ class Node:
         self.name = name
         self.nodal_stations = []
         self.demand = demand
-        ISO._add_node(self)
-        RZ._add_node(self)
+        self.RZ = RZ
+        self.ISO = ISO
+        self.ISO._add_node(self)
+        self.RZ._add_node(self)
         
         
     def add_station(self, Station):
         self.nodal_stations.append(Station)
+        self.RZ._add_station(Station)
         
     def set_demand(self, demand):
         self.demand = demand
@@ -60,8 +63,34 @@ class Node:
         
 class Branch:
 
-    def __init__(self, name):
-        self.name = name
+    def __init__(self, SN, RN, ISO, capacity=0, loss_factor=0.0001, bands=3):
+        self.name = '_'.join([SN.name, RN.name])
+        self.sending_node = SN
+        self.receiving_node = RN
+        self.capacity = capacity
+        self.loss_factor = loss_factor
+        self.ISO = ISO
+
+        
+        self.bands = []
+        self.band_capacity = {}
+        self.band_loss_factor = {}
+        
+        ISO._add_branch(self)
+        
+        self._create_bands(bands=bands)
+        
+    def _create_bands(self, bands=3):
+        
+        for band in xrange(bands):
+            b = str(band + 1)
+            band_name = '_'.join([self.name, b])
+            
+            self.bands.append(band_name)
+            
+            self.band_capacity[band_name] = self.capacity / bands * 1.0
+            self.band_loss_factor[band_name] = 2 * (band + 0.5) * self.band_capacity[band_name] * self.loss_factor
+        
         
         
 class ReserveZone:
@@ -70,11 +99,15 @@ class ReserveZone:
         self.name = name
         self.nodes = []
         ISO._add_reserve_zone(self)
+        self.stations = []
         
     
     def _add_node(self, node):
         
         self.nodes.append(node)
+        
+    def _add_station(self, station):
+        self.stations.append(station)
         
         
 if __name__ == '__main__':

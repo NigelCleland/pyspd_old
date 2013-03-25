@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.expanduser('~/python/pyspd/pyspd'))
 
 from iso import ISO
-from participants import Station, Node, ReserveZone
+from participants import Station, Node, ReserveZone, Branch
 from model import LPSolver
 
 if __name__ == '__main__':
@@ -18,6 +18,8 @@ if __name__ == '__main__':
     
     hay = Node("Haywards", SO, RZNorth, demand=100)
     ben = Node("Benmore", SO, RZSouth, demand=200)
+    
+    HVDC = Branch(hay, ben, SO, capacity=700)
     
     manapouri = Station("Manapouri", ben, SO, capacity=720, spinning=True)
     huntly = Station("Huntly", hay, SO, capacity=1000, spinning=True)
