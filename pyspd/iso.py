@@ -6,7 +6,14 @@ class ISO:
     Independent System Operator
     ---------------------------
     Contains all of the information necessary to pass to the solver in order
-    to create the grid dispatch
+    to create the grid dispatch.
+    
+    This class is created first, only create one, and is passed to a number of
+    other classes. It will add these other objects to the appropriate place
+    and where necessary call upon them in order to obtain their offers.
+    
+    Is initialised primarily empty with space for a number of different
+    instances.
     """
     
     def __init__(self, name):
@@ -29,7 +36,9 @@ class ISO:
         self.intload_names = []
         
     def initialise_empty(self):
-        """ Initialise an empty dispatch """
+        """ Initialise an empty dispatch including all of the structures
+            necessary in order to pass the dispatch to the solver
+        """
         
         self.energy_bands = [] # Done
         self.reserve_bands = [] # Done
@@ -75,7 +84,7 @@ class ISO:
         
         
     def create_offers(self):
-        """ Create a full offer for dispatch """
+        """ Create the full offer dispatch from the base classes """
         #self.initialise_empty()
         self.get_nodal_demand()
         self.get_energy_offers()
@@ -84,6 +93,10 @@ class ISO:
         
         
     def get_nodal_demand(self):
+        """ Query all nodes to get there demand, also add each station
+            associated with a node to an internal node energy map for 
+            creation of the respective constraints in the LP
+        """
         for node in self.nodes:
             self.all_nodes.append(node.name)
             self.node_demand[node.name] = node.demand
@@ -93,6 +106,13 @@ class ISO:
         
         
     def get_energy_offers(self):
+        """ Obtain the energy from each station consisting of a price, band
+            and offer maximum
+            Will also take care of mapping specific bands to total stations
+            as well as determining whether a particular station may provide
+            spinning reserve.
+        
+        """
         for station in self.stations:
             self.energy_totals.append(station.name)
             self.energy_total_maximum[station.name] = station.capacity
@@ -108,9 +128,20 @@ class ISO:
                     
                     
     def get_reserve_offers(self):
+        """
+        Get the reserve offers from both IL capable load entities as well as
+        from spinning reserve capable generation stations
+        
+        Will map all of the necessary bands to one another including for
+        spinning reserve to provide assistance in mapping the two together in
+        a somewhat sane manner. Current implementation is very wordy however.
+        
+        Will also map the stations to particular reserve zones in order to
+        determine dispatch for particular reserve areas.
+        """
+        # Get the spinning reserve offers
         for station in self.spinning_stations:
             self.reserve_totals.append(station.name)
-            
             
             for band in station.rband_names:
                 self.reserve_bands.append(band)
@@ -121,6 +152,7 @@ class ISO:
                 self.reserve_band_map[station.name].append(band)
                 self.spin_map[station.name].append(band)
                 
+        # Get the interuptible load offers
         for il in self.intload:
             self.reserve_totals.append(il.name)
             
@@ -130,7 +162,7 @@ class ISO:
                 self.reserve_band_maximum[band] = il.band_offers[band]
                 self.reserve_band_map[il.name].append(band)
                 
-                
+        # Map to particular reserve zones        
         for RZ in self.reserve_zones:
             for station in RZ.stations:
                 self.reserve_zone_generators[RZ.name].append(station.name)
@@ -141,6 +173,11 @@ class ISO:
                 
             
     def get_network(self):
+        """
+        Develop the network used to create the dispatch
+        Creates mapping for nodes, transmission directions and reserve zones
+        Has preliminary support for losses but not implemented yet.
+        """
         for branch in self.branches:
             self.transmission_totals.append(branch.name)
             self.transmission_total_maximum[branch.name] = branch.capacity
@@ -208,22 +245,26 @@ class ISO:
         
         
     def _add_node(self, node):
+        """ Adds a node to the ISO """
         self.nodes.append(node)
         self.node_name_map[node.name] = node
         
     
     def _add_branch(self, branch):
+        """ Adds a branch to the ISO """
         self.branches.append(branch)
         self.branch_name_map[branch.name] = branch
         
         
     def _add_reserve_zone(self, RZ):
+        """ Adds a reserve zone to the ISO """
         self.reserve_zones.append(RZ)
         self.reserve_zone_names.append(RZ.name)
         self.reserve_zone_name_map[RZ.name] = RZ
         
     
     def _add_intload(self, Load):
+        """ Adds an interruptible load provider to the ISO """
         self.intload.append(Load)
         self.intload_names.append(Load)
         self.reserve_name_map[Load.name] = Load
