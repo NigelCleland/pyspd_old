@@ -5,11 +5,6 @@ sys.path.append(os.path.expanduser('~/python/pyspd/pyspd'))
 
 from api import *
 
-#from iso import ISO
-#from participants import Station, Node, ReserveZone, Branch
-#from participants import InterruptibleLoad, Company
-#from model import LPSolver
-
 if __name__ == '__main__':
     
     # Set up the simulation
