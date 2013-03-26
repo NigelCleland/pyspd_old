@@ -112,6 +112,15 @@ class Node:
         self.load_cost = self.demand * self.price
         
 class Branch:
+    """
+    Branch
+    ------
+    
+    Class which is used to define the transmission between two particular
+    nodes in the grid with automated support for declaring it a risk, naming it
+    and determining piece wise linear losses from a loss factor and the total
+    capacity.
+    """
 
     def __init__(self, SN, RN, ISO, capacity=0, loss_factor=0.0001, bands=3,
                  risk=False):
@@ -133,6 +142,13 @@ class Branch:
         self._create_bands(bands=bands)
         
     def _create_bands(self, bands=3):
+        """ Create a band structure and determine the piece wise linear loss
+        factors for each band
+        
+        This is currently not needed but will eventually be used to incorporate
+        losses into the pyspd model.
+        
+        """
         
         for band in xrange(bands):
             b = str(band + 1)
@@ -145,11 +161,18 @@ class Branch:
             
             
     def add_flow(self, flow):
+        """ Add the dispatched flow to the branch """
         self.flow = flow
         
         
         
 class ReserveZone:
+    """
+    ReserveZone
+    -----------
+    A unique reserve zone for which an individual risk is determined
+    as well as an individual price for different dispatched units.
+    """
     
     def __init__(self, name, ISO):
         self.name = name
@@ -160,21 +183,34 @@ class ReserveZone:
         self.price = 0
     
     def _add_node(self, node):
-        
+        """ Add a node to a particular reserve zone """
         self.nodes.append(node)
         
     def _add_station(self, station):
+        """ Add a station to a particular reserve zone """
         self.stations.append(station)
         
     def _add_intload(self, IL):
+        """ Add an IL provider to a particular reserve zone """
         self.intload.append(IL)
         
     
     def add_price(self, price):
+        """ Add the reserve price from the dispatch to the Reserve Zone """
         self.price = price
         
         
 class InterruptibleLoad:
+    """
+    InterruptibleLoad
+    -----------------
+    An interruptible load copany is one who is capable of providing reserve
+    and is not associated with an individual generation plant.
+    
+    To do
+    -----
+    Add support for making sure a units load is greater than the IL provided.
+    """
 
     def __init__(self, name, node, ISO, Company, capacity=0):
         self.name = name
@@ -192,21 +228,31 @@ class InterruptibleLoad:
         
     
     def add_offer(self, band='0', price=0, offer=0):
+        """ Add an offer to the company consisting of a band name, price 
+            and offer
+        """
         name = '_'.join([self.name, band])
         self.band_names.append(name)
         self.band_prices[name] = price
         self.band_offers[name] = offer
         
     def add_multiple_offers(self, offer_dict):
+        """ Helper to add multiple offers at once for a station.
+            Must be passed a tuple of dictionaries which are then iterated over.
+        """
         for row in offer_dict:
             self.add_offer(**row)   
             
             
     def add_res_dispatch(self, dispatch):
+        """ Get the reserve dispatch from the Solver and calculate the
+            reserve revenue
+        """
         self.reserve_dispatch = dispatch 
         self.calculate_reserve_revenue()
         
     def calculate_reserve_revenue(self):
+        """ Calculate the reserve revenue from the dispatch """
         self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price    
     
     
@@ -230,12 +276,17 @@ class Company:
         self.company_revenue = 0
         
     def add_station(self, Station):
+        """ Add a generation station to the company """
         self.stations.append(Station)
         
     def add_intload(self, IL):
+        """ Add an interruptible load unit to the company """
         self.intload.append(IL)
         
     def calculate_company_revenue(self):
+        """ Calculate the total revenue for a company from its stations and
+        IL units. Iterates over all of them and sums them together.
+        """
         self.company_revenue = (sum([s.total_revenue for s in self.stations]) +
                                 sum([s.reserve_revenue for s in self.intload]))
         
