@@ -3,7 +3,40 @@ import numpy as np
 import time
 
 class LPSolver:
-    """ Linear Program Solver for the small models
+    """
+    LPSolver
+    --------
+    
+    Crates a linear program class which can be used to setup, solve and return
+    the optimal dispatch values from the grid dispatch problem.
+    
+    External Dependencies
+    ---------------------
+    pulp : puLP is a utility for creating and solving linear programs
+    Coin_CMD() : An open source linear program solver provided by Coin-or
+    
+    Usage
+    -----
+    To use the LPSolver class it is called with a fully defined
+    ISO class to act upon.
+    There exists three core functions:
+        1. setup_lp : Will setup the linear program using pulp terminology
+        2. solve_lp : Will solve the linear program using the COIN_CMD solver
+        3. return_dispatch : Will return the dispatch to the base objects
+                             created.
+
+    For ease of use these have been bundled together in a single function.
+    
+    Usage Flags (Not currently implemented)
+    -----------
+    reserve : Specify whether it is desirable to constraint the dispatch
+              via reserve
+    proportion : Whether the proportionality constraint is binding upon
+                 the reserve dispatch
+    combined : Whether the combined energy and reserve dispatch is binding upon
+               the reserve dispatch
+    transmission : Whether the transmission constraints should be binding.
+    losses : Whether the loss constraints should be binding.
     """
     
     def __init__(self, ISO):
@@ -25,6 +58,8 @@ class LPSolver:
                  transmission=True):
         """ Set up the Linear Program by creating an objective function and 
             passing the requisite variables to it.
+            
+            Creates the linear program according to simplified SPD model
         
         """
         
@@ -166,9 +201,13 @@ class LPSolver:
         
         
     def write_lp(self, name="Test.lp"):
+        """ Write the linear program to a file """
         self.lp.writeLP(name)
         
     def solve_lp(self):
+        """ Solve the linear program, time it and return the written 
+            linear program if a non-optimal solution is determined
+        """
         begin = time.time()
         self.lp.solve(lp.COIN_CMD())
         solved = time.time() - begin
@@ -181,18 +220,21 @@ class LPSolver:
         
         
     def get_values(self):
+        """ Print all variables and values """
         for val in self.lp.variables():
             print val, val.varValue
             
             
     def get_shadow_values(self):
+        """ Print all shadow value constraints and values """
         for n in self.lp.constraints:
             try:
                 print n, self.lp.constraints[n].pi
             except:
-                print n, 0
+                print n, 0.
         
     def get_prices(self):
+        """ Print all prices (energy and reserve) """
         for n in self.lp.constraints:
             if "Price" in n:
                 try:
@@ -213,6 +255,7 @@ class LPSolver:
         self.dispatch_time = time.time() - begin
         
     def print_time(self):
+        """ Print the model run timings """
         print "Model created in %0.3f ms" % float(self.setup_time * 1000)
         print "Model solved in %0.3f ms" % float(self.solution_time * 1000)
         print "Model post process in %0.3f ms" % float(self.dispatch_time * 1000)
