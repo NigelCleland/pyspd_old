@@ -87,5 +87,87 @@ def test_station_reserve_offer():
     assert 'rband_proportions' not in STFalse.__dict__
     
     
+def test_station_price_dispatch():
+    
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND = Node("ND", SO, RZ)
+    CO = Company("CO")
+    
+    ST = Station("ST", ND, SO, CO, spinning=False, capacity=400)
+    
+    ND.add_price(400)
+    ST.add_dispatch(300)
+    
+    assert ST.energy_dispatch == 300
+    assert ST.energy_revenue == 300 * 400
+    assert ST.total_revenue == 300 * 400
+    
+def test_station_energy_and_reserve():
+
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND = Node("ND", SO, RZ)
+    CO = Company("CO")
+    
+    ST = Station("ST", ND, SO, CO, spinning=True, capacity=400)
+
+    ND.add_price(400)
+    ST.add_dispatch(300)
+    
+    RZ.add_price(200)
+    ST.add_res_dispatch(200)
+    
+    assert ST.reserve_dispatch == 200
+    assert ST.reserve_revenue == 200 * 200
+    assert ST.total_revenue == 200 * 200 + 400 * 300
+
+
+    
+def test_node_creation():
+
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND = Node("ND", SO, RZ)
+    
+    assert ND.name == "ND"
+    assert ND.nodal_stations == []
+    assert ND.demand == 0
+    assert ND.ISO == SO
+    assert ND.RZ == RZ
+    assert ND.intload == []
+    
+def test_node_additions():
+
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND = Node("ND", SO, RZ)
+    Co =Company("Co")
+    
+    ST = Station("ST", ND, SO, Co, spinning=True, capacity=400)
+    IL = InterruptibleLoad("IL", ND, SO, Co, capacity=300)
+    
+    assert ND.nodal_stations == [ST]      
+    assert ND.RZ.stations == [ST]
+    assert ND.RZ.intload == [IL]
+    assert ND.intload == [IL]
+    
+    
+def test_node_methods():
+    
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND = Node("ND", SO, RZ)
+    
+    ND.set_demand(200)
+    ND.add_price(100)
+    
+    assert ND.demand == 200
+    assert ND.price == 100
+    assert ND.load_cost == 200 * 100
+    
+    
+    
+    
 if __name__ == '__main__':
     pass
