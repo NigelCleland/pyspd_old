@@ -166,6 +166,30 @@ def test_node_methods():
     assert ND.price == 100
     assert ND.load_cost == 200 * 100
     
+def test_branch_creation():
+
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND1 = Node("ND1", SO, RZ)
+    ND2 = Node("ND2", SO, RZ)
+    
+    BR = Branch(ND1, ND2, SO, capacity=500, loss_factor=0.2, bands=2)
+    
+    assert BR.name == "ND1_ND2"
+    assert BR.sending_node == ND1
+    assert BR.receiving_node == ND2
+    assert BR.capacity == 500
+    assert BR.lf == 0.2
+    assert BR.risk == False
+    
+    assert BR.bands == ["ND1_ND2_1", "ND1_ND2_2"]
+    assert BR.bc["ND1_ND2_1"] == 500 / 2.
+    assert BR.blf["ND1_ND2_1"] == 2 * 0.5 * 250. * 0.2
+    
+    BR.add_flow(300)
+    
+    assert BR.flow == 300
+    
     
     
     
