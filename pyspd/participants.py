@@ -54,7 +54,7 @@ class Station:
             self.rband_proportions[rband_name] = prop
             
         else:
-            print "Not a spinning station, cannot add reserve offers"
+            pass 
             
     def add_multiple_energy_offers(self, offer_dict):
         """ Add multiple energy offers to the stations"""
