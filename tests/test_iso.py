@@ -62,6 +62,36 @@ def test_add_station():
     assert SO.node_name_map[ND.name].nodal_stations == [ST]
     assert SO.reserve_zone_name_map[RZ.name].stations == [ST]
     
+    
+def test_add_risk_free_branch():
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND1 = Node("ND1", SO, RZ)
+    ND2 = Node("ND2", SO, RZ)
+    
+    # Create a branch with no risk...
+    BR = Branch(ND1, ND2, SO, risk=False)
+    
+    assert BR.name == '_'.join([ND1.name, ND2.name])
+    assert SO.branches == [BR]
+    assert SO.branch_name_map[BR.name] == BR
+    
+
+def test_add_il():
+    
+    SO = ISO("System Operator")
+    RZ = ReserveZone("RZ", SO)
+    ND1 = Node("ND1", SO, RZ)
+    ILC = Company("ILC")
+    IL = InterruptibleLoad("IL", ND1, SO, ILC)
+    
+    assert SO.intload == [IL]
+    assert SO.intload_names == [IL.name]
+    assert SO.reserve_name_map[IL.name] == IL
+    
+    
+    
+    
    
 if __name__ == '__main__':
     pass

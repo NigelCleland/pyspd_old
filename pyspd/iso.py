@@ -266,7 +266,7 @@ class ISO:
     def _add_intload(self, Load):
         """ Adds an interruptible load provider to the ISO """
         self.intload.append(Load)
-        self.intload_names.append(Load)
+        self.intload_names.append(Load.name)
         self.reserve_name_map[Load.name] = Load
         
         
