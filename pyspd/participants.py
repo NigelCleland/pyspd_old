@@ -1,5 +1,18 @@
+"""
+Participants
+------------
 
+Classes to define different agents within the system
+
+"""
 class Station:
+    """
+    A generation station which is associated with a node and a particular
+    company.
+    
+    May be capable of providing spinning reserve if explicitly set to and is
+    capable of providing energy and reserve offers to the ISO.
+    """
     def __init__(self, name, node, ISO, Company, capacity=0, ebands=3,
                  spinning=False):
         self.name = name
@@ -23,7 +36,7 @@ class Station:
             self.rband_proportions = {}
         
     def add_energy_offer(self, band='0', price=0, offer=0):
-        """ Add an Offer"""
+        """ Add an Energy Offer to the Station"""
         # Get the band name
         band_name = '_'.join([self.name, band])
         
@@ -44,38 +57,62 @@ class Station:
             print "Not a spinning station, cannot add reserve offers"
             
     def add_multiple_energy_offers(self, offer_dict):
+        """ Add multiple energy offers to the stations"""
         for row in offer_dict:
             self.add_energy_offer(**row)
             
     
     def add_multiple_reserve_offers(self, offer_dict):
+        """ Add multiple reserve offers to the station """
         for row in offer_dict:
             self.add_reserve_offer(**row)
             
             
     def add_dispatch(self, dispatch):
+        """ Obtain the energy dispatch from the Solver and calculate the revenue"""
         self.energy_dispatch = dispatch
         self.calculate_energy_revenue()
         
         
     def calculate_energy_revenue(self):
+        """ Calculates the energy revenue """
         self.energy_revenue = self.energy_dispatch * self.node.price
+        if self.spinning == False:
+            self.total_revenue = self.energy_revenue
         
 
     def add_res_dispatch(self, dispatch):
+        """ Obtain the reserve dispatch from the Solver
+        Calculate the reserve revenue
+        Calculate the total revenue
+        """
         self.reserve_dispatch = dispatch
         self.calculate_reserve_revenue()
         self.calculate_total_revenue()
         
     def calculate_reserve_revenue(self):
+        """ calculate the reserve revenue """
         self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price
         
     def calculate_total_revenue(self):
+        """ Calculate the total revenue for a station """
         self.total_revenue = self.reserve_revenue + self.energy_revenue
         
         
 class Node:
-
+    """
+    Node
+    ----
+    
+    A node is a location in the grid which is associated with generation
+    stations, IL providers, reserve zones and transmission connections.
+    
+    It has an associated demand which must be cleared at all points in time
+    in order to uniquely solve the grid dispatch.
+    
+    As many nodes may be declared as desired and it may be connected via
+    branches to the main network.
+    """
 
     def __init__(self, name, ISO, RZ, demand=0):
         self.name = name
@@ -90,25 +127,32 @@ class Node:
         
         
     def add_station(self, Station):
+        """ Add a station to the node """
         self.nodal_stations.append(Station)
         self.RZ._add_station(Station)
         
         
     def set_demand(self, demand):
+        """ Set the nodal demand to a non default value """
         self.demand = demand
         
         
     def add_intload(self, Load):
+        """ Add an interuptible load provider to the node"""
         self.intload.append(Load)
         self.RZ._add_intload(Load)
         
         
     def add_price(self, price):
+        """ Get the price from the Solver and calculated the cost of load at
+        the node
+        """
         self.price = price
         self.calculate_load_cost()
         
         
     def calculate_load_cost(self):
+        """ Calculate the total cost of serving load at the node """
         self.load_cost = self.demand * self.price
         
 class Branch:
