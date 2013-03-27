@@ -5,3 +5,6 @@
 *.gitignore~
 *.csv
 *.csv~
+build
+dist
+
