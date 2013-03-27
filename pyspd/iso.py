@@ -166,7 +166,8 @@ class ISO:
         for RZ in self.reserve_zones:
             for station in RZ.stations:
                 self.reserve_zone_generators[RZ.name].append(station.name)
-                self.reserve_zone_reserve[RZ.name].append(station.name)
+                if station.spinning == True:
+                    self.reserve_zone_reserve[RZ.name].append(station.name)
                 
             for il in RZ.intload:
                 self.reserve_zone_reserve[RZ.name].append(il.name)

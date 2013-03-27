@@ -197,7 +197,6 @@ class LPSolver:
         # Reserve Dispatch
         for r in rzones:
             n1 = '_'.join([r, 'Reserve_Price'])
-            print rz_providers
             addC(SUM(rto[i] for i in rz_providers[r]) - risk[r] >= 0., n1)
         
         
