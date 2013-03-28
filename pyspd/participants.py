@@ -76,7 +76,8 @@ class Station:
         
     def calculate_energy_revenue(self):
         """ Calculates the energy revenue """
-        self.energy_revenue = self.energy_dispatch * self.node.price
+        self.calculate_cost()
+        self.energy_revenue = self.energy_dispatch * self.node.price - self.costs
         if self.spinning == False:
             self.total_revenue = self.energy_revenue
         
@@ -97,6 +98,24 @@ class Station:
     def calculate_total_revenue(self):
         """ Calculate the total revenue for a station """
         self.total_revenue = self.reserve_revenue + self.energy_revenue
+        
+    def add_cost_function(self, cfunc):
+        self.cost_func = cfunc
+        
+    def calculate_cost(self):
+        self.costs = self.cost_func(self.energy_dispatch)
+        
+    def clear_all_offers(self):
+    
+        self.band_names = []
+        self.band_offers = {}
+        self.band_prices = {}
+        if self.spinning:
+            self.rband_name = []
+            self.rband_offers = {}
+            self.rband_prices = {}
+            self.rband_proportions = {}
+        
         
         
 class Node:
@@ -297,7 +316,12 @@ class InterruptibleLoad:
         
     def calculate_reserve_revenue(self):
         """ Calculate the reserve revenue from the dispatch """
-        self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price    
+        self.reserve_revenue = self.reserve_dispatch * self.node.RZ.price  
+        
+    def clear_all_offers(self):
+        self.band_names = []
+        self.band_prices = {}
+        self.band_offers = {}  
     
     
 class Company:
