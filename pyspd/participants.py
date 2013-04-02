@@ -21,6 +21,7 @@ class Station:
         self.band_names = []
         self.band_offers = {}
         self.band_prices = {}
+        self.risk = risk
         
         node.add_station(self)
         ISO._add_station(self)
