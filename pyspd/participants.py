@@ -263,6 +263,9 @@ class ReserveZone:
         """ Add the reserve price from the dispatch to the Reserve Zone """
         self.price = price
         
+    def add_dispatch(self, dispatch):
+        self.dispatch = dispatch
+        
         
 class InterruptibleLoad:
     """

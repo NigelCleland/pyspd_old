@@ -222,13 +222,17 @@ class ISO:
         print "--------------- Beginning Dispatch Results --------------------"
         print "---------------------------------------------------------------"
         print "--------------- Energy Prices ---------------------------------"
-        print "----- Node ----- Price ----------------------------------------"
+        print "----- Node ----- Price ----- Demand ---------------------------"
         for node in self.nodes:
-            print "    | %s |   $%0.2f/MWh | " % (node.name[:4], node.price)
+            print "    | %s |   $%0.2f/MWh | %0.2f MW | " % (node.name[:4],
+                                                             node.price,
+                                                             node.demand)
         print "--------------- Reserve Prices --------------------------------"
-        print "----- RZone ----- Price ---------------------------------------"
+        print "----- RZone ----- Price --- Dispatch --------------------------"
         for rzone in self.reserve_zones:
-            print "    | %s |   $%0.2f/MWh | " % (rzone.name[:5], rzone.price)
+            print "    | %s |   $%0.2f/MWh | %0.2f MW | " % (rzone.name[:5],
+                                                             rzone.price,
+                                                             rzone.dispatch)
         print "--------------- Energy Dispatch -------------------------------"
         print "----- Station ----- Dispatch ----- Revenue --------------------"
         for station in self.stations:
@@ -245,6 +249,11 @@ class ISO:
             print "    | %s |   %0.2f MW |  $%0.2f | " % (intload.name,
                                             abs(intload.reserve_dispatch),
                                             abs(intload.reserve_revenue))
+        print "---------------------------------------------------------------"
+        print "--------------- Transmission Dispatch -------------------------"
+        print "------ Branch ------- Dispatch --------------------------------"
+        for branch in self.branches:
+            print "    | %s |   %0.2f MW | " % (branch.name, branch.flow)
                 
         
         

@@ -253,6 +253,7 @@ class LPSolver:
         self._reserve_dispatch()
         self._branch_flow()
         self._log_duals()
+        self._risk_dispatch()
         self.dispatch_time = time.time() - begin
         
     def print_time(self):
@@ -324,6 +325,15 @@ class LPSolver:
         self.duals = duals
         self.non_zero_duals = {n: duals[n] for n in duals if duals[n] != 0.}
         self.negative_duals = {n: duals[n] for n in duals if duals[n] < 0.}
+        
+        
+    def _risk_dispatch(self):
+        dispatch = {v.name.split('_')[-1]: v.varValue 
+                        for v in self.lp.variables()
+                        if "Risk" in v.name}
+                        
+        for zone in dispatch:
+            self.ISO.reserve_zone_name_map[zone].add_dispatch(dispatch[zone])
         
                 
 if __name__ == '__main__':
