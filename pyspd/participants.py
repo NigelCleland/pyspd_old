@@ -14,7 +14,7 @@ class Station:
     capable of providing energy and reserve offers to the ISO.
     """
     def __init__(self, name, node, ISO, Company, capacity=0, ebands=3,
-                 spinning=False):
+                 spinning=False, risk=True):
         self.name = name
         self.capacity = capacity
         self.spinning = spinning
