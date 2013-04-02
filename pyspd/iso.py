@@ -79,6 +79,7 @@ class ISO:
         self.reserve_zone_names = [] # Done
         self.reserve_zone_generators = defaultdict(list) # Done
         self.reserve_zone_transmission = defaultdict(list) # Done
+        self.reserve_zone_trans_direct = defaultdict(dict) # Done
         
         self.reserve_zone_reserve = defaultdict(list) # Done
         
@@ -203,6 +204,9 @@ class ISO:
                 rnRZ = branch.receiving_node.RZ.name
                 self.reserve_zone_transmission[snRZ].append(branch.name)
                 self.reserve_zone_transmission[rnRZ].append(branch.name)
+                
+                self.reserve_zone_trans_direct[snRZ][branch.name] = -1
+                self.reserve_zone_trans_direct[rnRZ][branch.name] = 1
             
             
             for band in branch.bands:

@@ -100,6 +100,7 @@ class LPSolver:
         rzones = self.ISO.reserve_zone_names
         rzone_g = self.ISO.reserve_zone_generators
         rzone_t = self.ISO.reserve_zone_transmission
+        rztd = self.ISO.reserve_zone_trans_direct
         
         rz_providers = self.ISO.reserve_zone_reserve
         
@@ -192,7 +193,7 @@ class LPSolver:
             # Transmission Risk        
             for t in rzone_t[r]:
                 name = '_'.join([r, t])
-                addC(risk[r] >= tto[t], name)
+                addC(risk[r] >= tto[t] * rztd[r][t], name)
                 
         # Reserve Dispatch
         for r in rzones:
