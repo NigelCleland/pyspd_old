@@ -237,6 +237,14 @@ class ISO:
                                                   abs(station.energy_revenue))
         print "--------------- Reserve Dispatch ------------------------------"
         print "----- Station ----- Dispatch ----- Revenue --------------------"
+        for station in self.spinning_stations:
+            print "    | %s |   %0.2f MW |  $%0.2f |" % (station.name,
+                                                abs(station.reserve_dispatch),
+                                                abs(station.reserve_revenue))
+        for intload in self.intload:
+            print "    | %s |   %0.2f MW |  $%0.2f | " % (intload.name,
+                                            abs(intload.reserve_dispatch),
+                                            abs(intload.reserve_revenue))
                 
         
         
