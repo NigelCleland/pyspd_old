@@ -192,7 +192,7 @@ class LPSolver:
             # Transmission Risk        
             for t in rzone_t[r]:
                 name = '_'.join([r, t])
-                addC(risk[r] >= -1 * tto[t], name)
+                addC(risk[r] >= tto[t], name)
                 
         # Reserve Dispatch
         for r in rzones:
