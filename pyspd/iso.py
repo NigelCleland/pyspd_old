@@ -218,42 +218,50 @@ class ISO:
                 
     def pretty_print(self):
         """ Pretty Printing of the solved dispatch including for analysis """
-        print "---------------------------------------------------------------"
-        print "--------------- Beginning Dispatch Results --------------------"
-        print "---------------------------------------------------------------"
-        print "--------------- Energy Prices ---------------------------------"
-        print "----- Node ----- Price ----- Demand ---------------------------"
+        print "-" * 60
+        print "\t"*2, "Beginning Dispatch Results"
+        print "-" * 60
+        print "\t" * 2, "Energy Prices"
+        print "\tNode\t\tPrice\t\tDemand"
+        print "\t----\t\t-----\t\t------"
         for node in self.nodes:
-            print "    | %s |   $%0.2f/MWh | %0.2f MW | " % (node.name[:4],
-                                                             node.price,
-                                                             node.demand)
-        print "--------------- Reserve Prices --------------------------------"
-        print "----- RZone ----- Price --- Dispatch --------------------------"
+            print "\t%s\t\t$%0.2f/MWh\t\t%0.2f MW" % (node.name[:4],
+                                                      node.price,
+                                                      node.demand)
+        print '-' * 60
+        print "\t\tReserve Prices"
+        print "\tRZone\t\tPrice\t\tDispatch"
+        print "\t-----\t\t-----\t\t--------"
         for rzone in self.reserve_zones:
-            print "    | %s |   $%0.2f/MWh | %0.2f MW | " % (rzone.name[:5],
+            print "\t%s\t\t$%0.2f/MWh\t\t%0.2f MW " % (rzone.name[:5],
                                                              rzone.price,
                                                              rzone.dispatch)
-        print "--------------- Energy Dispatch -------------------------------"
-        print "----- Station ----- Dispatch ----- Revenue --------------------"
+        print '-' * 60
+        print "\t\tEnergy Dispatch"
+        print "\tStation\t\tDispatch\t\tRevenue"
+        print "\t-------\t\t--------\t\t-------"
         for station in self.stations:
-            print "    | %s |   %0.2f MW |  $%0.2f |" % (station.name[:5], 
+            print "\t%s\t\t%0.2f MW\t\t$%0.2f" % (station.name[:5], 
                                                   abs(station.energy_dispatch),
                                                   abs(station.energy_revenue))
-        print "--------------- Reserve Dispatch ------------------------------"
-        print "----- Station ----- Dispatch ----- Revenue --------------------"
+        print '-' * 60
+        print "\t\tReserve Dispatch"
+        print "\tStation\t\tDispatch\t\tRevenue"
+        print "\t-------\t\t--------\t\t-------"
         for station in self.spinning_stations:
-            print "    | %s |   %0.2f MW |  $%0.2f |" % (station.name,
+            print "\t%s\t\t%0.2f MW\t\t$%0.2f" % (station.name,
                                                 abs(station.reserve_dispatch),
                                                 abs(station.reserve_revenue))
         for intload in self.intload:
-            print "    | %s |   %0.2f MW |  $%0.2f | " % (intload.name,
+            print "\t%s\t\t%0.2f MW\t\t$%0.2f" % (intload.name[-5:],
                                             abs(intload.reserve_dispatch),
                                             abs(intload.reserve_revenue))
-        print "---------------------------------------------------------------"
-        print "--------------- Transmission Dispatch -------------------------"
-        print "------ Branch ------- Dispatch --------------------------------"
+        print "-" * 60
+        print "\t\tTransmission Dispatch"
+        print "\tBranch\t\t\tDispatch"
+        print "\t------\t\t\t--------"
         for branch in self.branches:
-            print "    | %s |   %0.2f MW | " % (branch.name, branch.flow)
+            print "\t%s\t\t%0.2f MW" % (branch.name, branch.flow)
                 
         
         
