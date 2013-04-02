@@ -344,6 +344,13 @@ class Company:
         self.intload = []
         self.company_revenue = 0
         
+        self.contract_nodes = []
+        self.contract_node = {}
+        self.contract_amount = {}
+        self.contract_prices = {}
+        
+        self.contract_cost = 0
+        
     def add_station(self, Station):
         """ Add a generation station to the company """
         self.stations.append(Station)
@@ -352,12 +359,26 @@ class Company:
         """ Add an interruptible load unit to the company """
         self.intload.append(IL)
         
+    def add_contract(self, node, contract, contract_price=0):
+        self.contract_nodes.append(node)
+        self.contract_node[node.name] = node
+        self.contract_amount[node.name] = contract
+        self.contract_prices[node.name] = contract_price
+        
+    def calculate_contract_costs(self):
+        self.contract_cost = sum([(self.contract_prices[n.name] - n.price) *
+                 self.contract_amount[n.name] for n in self.contract_nodes])
+        
     def calculate_company_revenue(self):
         """ Calculate the total revenue for a company from its stations and
         IL units. Iterates over all of them and sums them together.
         """
-        self.company_revenue = (sum([s.total_revenue for s in self.stations]) +
-                                sum([s.reserve_revenue for s in self.intload]))
+        
+        gen_revenue = sum([s.total_revenue for s in self.stations])
+        res_revenue = sum([s.reserve_revenue for s in self.intload])
+        cont_revenue = self.contract_cost
+        
+        self.company_revenue = gen_revenue + res_revenue + cont_revenue
         
         
 if __name__ == '__main__':
